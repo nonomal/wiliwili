@@ -29,7 +29,7 @@
 ![Linux](https://img.shields.io/badge/-Linux-lightgrey?style=flat&logo=Linux&logoColor=white)
 [![fedora](https://img.shields.io/badge/fedora-copr-blue?logo=fedora)](https://copr.fedorainfracloud.org/coprs/mochaa/wiliwili/)
 [![Scoop Version (extras bucket)](https://img.shields.io/scoop/v/wiliwili?bucket=extras)](https://scoop.sh/#/apps?q=wiliwili)
-[![aur](https://img.shields.io/aur/version/wiliwili-git?color=blue&logo=archlinux)](https://aur.archlinux.org/packages/wiliwili-git/)
+[![aur](https://img.shields.io/aur/version/wiliwili?color=blue&logo=archlinux)](https://aur.archlinux.org/packages/wiliwili-git/)
 [![Flathub](https://img.shields.io/flathub/v/cn.xfangfang.wiliwili)](https://flathub.org/apps/cn.xfangfang.wiliwili)
 [![nightly.link](https://img.shields.io/badge/nightly.link-%E6%B5%8B%E8%AF%95%E7%89%88-green)](https://nightly.link/xfangfang/wiliwili/workflows/build.yaml/dev)
 [![layout](https://img.shields.io/badge/wiliwili-自定义布局-yellow)](https://github.com/xfangfang/wiliwili_theme)
@@ -93,20 +93,8 @@ PC客户端支持切换硬件解码、秒开流畅适合老电脑、支持鼠标
 下载对应系统的安装包运行即可：[wiliwili releases](https://github.com/xfangfang/wiliwili/releases)
 
 > [!TIP]
-> 现在 Linux & Steam Deck 用户可以通过系统自带的软件商店（如Discover、GNOME Software）搜索 `wiliwili` 进行下载。
-
-<details>
-
-<br>
-注意：
-
-1. 显卡驱动需要支持 `OpenGL 3.2` 以运行此程序，OpenGL 2.0+, OpenGL ES 2.0+
-   设备需要自行编译，请参考 [项目 WIKI](https://github.com/xfangfang/wiliwili/wiki)
-2. Linux: 如有其他打包需求欢迎提交完善的打包脚本
-3. macOS: 欢迎 macOS 用户提交 Homebrew 安装方式到官方仓库
-4. 支持诸多包管理器，请参考 [项目 WIKI](https://github.com/xfangfang/wiliwili/wiki)
-
-</details>
+> 现在 Linux & Steam Deck 用户可以通过系统自带的软件商店（如Discover、GNOME Software）搜索 `wiliwili` 进行下载。  
+> 更多使用技巧请参考 [项目 WIKI](https://github.com/xfangfang/wiliwili/wiki)  
 
 <br>
 
@@ -364,7 +352,7 @@ docker run --rm -v $(pwd):/src/ xfangfang/wiliwili_ps4_builder:latest \
 
 # Acknowledgement
 
-The development of wiliwili cannot do without the support of the following open source projects.
+The development of wiliwili cannot do without the support of the following organization and open source projects.
 
 - Toolchain: devkitpro, switchbrew, vitasdk OpenOrbis and PacBrew
     - https://github.com/devkitPro
@@ -375,7 +363,7 @@ The development of wiliwili cannot do without the support of the following open 
 - UI Library: natinusala and XITRIX
     - https://github.com/natinusala/borealis
     - https://github.com/XITRIX/borealis
-- Video Player: Cpasjuste, proconsule fish47 and averne
+- Video Player: Cpasjuste, proconsule, fish47 and averne
     - https://github.com/Cpasjuste/pplay
     - https://github.com/proconsule/nxmp
     - https://github.com/fish47/FFmpeg-vita
@@ -390,7 +378,6 @@ The development of wiliwili cannot do without the support of the following open 
     - https://github.com/cesanta/mongoose
     - https://chromium.googlesource.com/webm/libwebp
     - https://github.com/fancycode/MemoryModule
-    - https://github.com/dacap/clip
 
 # Special thanks
 
