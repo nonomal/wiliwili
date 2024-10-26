@@ -619,6 +619,7 @@ void VideoView::requestSeeking(int seek, int delay) {
         is_seeking    = false;
         if (seek == 0) return;
         mpvCore->seekRelative(seek);
+        showOSD(true);
     } else {
         // 延迟触发跳转进度
         is_seeking = true;
@@ -630,6 +631,7 @@ void VideoView::requestSeeking(int seek, int delay) {
             is_seeking    = false;
             if (seek == 0) return;
             mpvCore->seekRelative(seek);
+            showOSD(true);
         });
     }
 }
