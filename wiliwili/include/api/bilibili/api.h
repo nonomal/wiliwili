@@ -27,7 +27,7 @@ const std::string DetailGRPC = _grpcBase + "/bilibili.app.view.v1.View/View";
 const std::string Detail    = _apiBase + "/x/web-interface/view";
 const std::string DetailAll = _apiBase + "/x/web-interface/view/detail";
 /// 视频分P详情
-const std::string PageDetail = _apiBase + "/x/player/v2";
+const std::string PageDetail = _apiBase + "/x/player/wbi/v2";
 /// 番剧详情.
 const std::string SeasonDetail = _apiBase + "/pgc/view/pc/season";
 /// 番剧推荐.
