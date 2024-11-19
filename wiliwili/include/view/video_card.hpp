@@ -5,9 +5,9 @@
 #pragma once
 
 #include "view/recycling_grid.hpp"
+#include "view/text_box.hpp"
 
 class SVGImage;
-class TextBox;
 
 class BaseVideoCard : public RecyclingGridItem {
 public:
@@ -35,6 +35,12 @@ public:
     void setCard(const std::string& pic, const std::string& title, const std::string& username,
                  const std::string& viewCount = "", const std::string& danmakuCount = "",
                  const std::string& rightBottomBadge = "", const std::string& extra = "");
+
+    /**
+     * 设置富文本标题
+     * @param title 富文本标题
+     */
+    void setTitle(const RichTextData& title);
 
     /**
      * 视频卡片基础信息
@@ -168,12 +174,18 @@ public:
                  std::string badge_top, std::string badge_color, std::string scoreCount, std::string score,
                  std::string type, std::string bottom);
 
+    /**
+     * 设置富文本标题
+     * @param title 富文本标题
+     */
+    void setTitle(const RichTextData& title);
+
     static RecyclingGridItem* create();
 
 private:
     BRLS_BIND(brls::Box, boxTop, "video/card/badge/boxTop");
     BRLS_BIND(brls::Label, badgeTop, "video/card/badge/top");
-    BRLS_BIND(brls::Label, labelTitle, "video/card/label/title");
+    BRLS_BIND(TextBox, labelTitle, "video/card/label/title");
     BRLS_BIND(brls::Label, labelSubtitle, "video/card/label/subtitle");
     BRLS_BIND(brls::Label, labelActor, "video/card/label/actor");
     BRLS_BIND(brls::Label, labelDesc, "video/card/label/desc");

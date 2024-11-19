@@ -71,6 +71,10 @@ void RecyclingGridItemVideoCard::setExtraInfo(const std::string& extra, float wi
     }
 }
 
+void RecyclingGridItemVideoCard::setTitle(const RichTextData& title) {
+    this->labelTitle->setRichText(title);
+}
+
 void RecyclingGridItemVideoCard::setBasicInfo(const std::string& title, const std::string& pic, const std::string& username) {
     this->labelTitle->setIsWrapping(true);
     this->labelTitle->setText(title);
@@ -303,6 +307,10 @@ void RecyclingGridItemSearchPGCVideoCard::setCard(std::string pic, std::string t
     }
 
     ImageHelper::with(this->picture)->load(pic);
+}
+
+void RecyclingGridItemSearchPGCVideoCard::setTitle(const RichTextData& title) {
+    this->labelTitle->setRichText(title);
 }
 
 RecyclingGridItem* RecyclingGridItemSearchPGCVideoCard::create() { return new RecyclingGridItemSearchPGCVideoCard(); }
