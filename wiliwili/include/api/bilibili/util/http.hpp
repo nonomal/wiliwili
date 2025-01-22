@@ -8,6 +8,7 @@
 #include <cpr/cpr.h>
 
 #include "bilibili/util/md5.hpp"
+#include "bilibili/util/json.hpp"
 #include "utils/number_helper.hpp"
 #include <pystring.h>
 
@@ -42,6 +43,7 @@ public:
     static inline int TIMEOUT = 10000;
     static inline cpr::Proxies PROXIES;
     static inline cpr::VerifySsl VERIFY;
+    static inline std::string PROTOCOL = "https:";
 
     static cpr::Response get(const std::string& url, const cpr::Parameters& parameters = {}, int timeout = 10000);
 
@@ -60,7 +62,7 @@ public:
                 }
                 callback(r);
             },
-            cpr::Url{url}, parameters, payload, CPR_HTTP_BASE);
+            cpr::Url{parseLink(url)}, parameters, payload, CPR_HTTP_BASE);
     }
 
     static void __cpr_get(const std::string& url, const cpr::Parameters& parameters = {},
@@ -77,7 +79,7 @@ public:
                 }
                 callback(r);
             },
-            cpr::Url{url}, parameters, CPR_HTTP_BASE);
+            cpr::Url{parseLink(url)}, parameters, CPR_HTTP_BASE);
     }
 
     template <typename ReturnType>

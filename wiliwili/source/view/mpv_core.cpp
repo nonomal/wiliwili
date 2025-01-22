@@ -358,6 +358,7 @@ void MPVCore::init() {
 #elif defined(__PSV__)
     mpvSetOptionString(mpv, "vd-lavc-dr", "no");
     mpvSetOptionString(mpv, "vd-lavc-threads", "4");
+    mpvSetOptionString(mpv, "fbo-format", "rgba8");
 
     // Fix vo_wait_frame() cannot be wakeup
     mpvSetOptionString(mpv, "video-latency-hacks", "yes");

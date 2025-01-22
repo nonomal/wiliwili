@@ -197,7 +197,7 @@ void BilibiliClient::get_pgc_all_filter(const std::function<void(PGCIndexFilters
         cpr::MultiPerform multiperform;
         for (auto& i : index_types) {
             std::shared_ptr<cpr::Session> session = std::make_shared<cpr::Session>();
-            session->SetUrl(Api::PGCIndexFilter);
+            session->SetUrl(HTTP::PROTOCOL + Api::PGCIndexFilter);
             session->SetParameters({{"type", "2"}, {"index_type", i}});
             session->SetHeader(HTTP::HEADERS);
             session->SetVerifySsl(HTTP::VERIFY);

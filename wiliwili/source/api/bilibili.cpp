@@ -34,9 +34,8 @@ void BilibiliClient::init(Cookies& data, std::function<void(Cookies, std::string
     }
     HTTP::TIMEOUT = timeout;
 
-    if (!httpProxy.empty() && !httpsProxy.empty()) HTTP::PROXIES = {{"http", httpProxy}, {"https", httpsProxy}};
-
-    HTTP::VERIFY = cpr::VerifySsl{tlsVerify};
+    setProxy(httpProxy, httpsProxy);
+    setTlsVerify(tlsVerify);
 }
 
 void BilibiliClient::setProxy(const std::string& httpProxy, const std::string& httpsProxy) {
@@ -44,6 +43,9 @@ void BilibiliClient::setProxy(const std::string& httpProxy, const std::string& h
     if (!httpProxy.empty() && !httpsProxy.empty()) HTTP::PROXIES = {{"http", httpProxy}, {"https", httpsProxy}};
 }
 
-void BilibiliClient::setTlsVerify(bool value) { HTTP::VERIFY = cpr::VerifySsl{value}; }
+void BilibiliClient::setTlsVerify(bool value) {
+    HTTP::VERIFY = cpr::VerifySsl{value};
+    HTTP::PROTOCOL = value ? "https:" : "http:";
+}
 
 }  // namespace bilibili

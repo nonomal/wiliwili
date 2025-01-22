@@ -8,14 +8,14 @@ namespace bilibili {
 
 namespace Api {
 
-const std::string _apiBase     = "https://api.bilibili.com";
-const std::string _appBase     = "https://app.bilibili.com";
-const std::string _vcBase      = "https://api.vc.bilibili.com";
-const std::string _bvcBase     = "https://bvc.bilivideo.com";
-const std::string _liveBase    = "https://api.live.bilibili.com";
-const std::string _passBase    = "https://passport.bilibili.com";
-const std::string _bangumiBase = "https://bangumi.bilibili.com";
-const std::string _grpcBase    = "https://grpc.biliapi.net";
+const std::string _apiBase     = "//api.bilibili.com";
+const std::string _appBase     = "//app.bilibili.com";
+const std::string _vcBase      = "//api.vc.bilibili.com";
+const std::string _bvcBase     = "//bvc.bilivideo.com";
+const std::string _liveBase    = "//api.live.bilibili.com";
+const std::string _passBase    = "//passport.bilibili.com";
+const std::string _bangumiBase = "//bangumi.bilibili.com";
+const std::string _grpcBase    = "//grpc.biliapi.net";
 
 /// ===
 /// 视频API

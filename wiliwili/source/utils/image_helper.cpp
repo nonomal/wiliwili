@@ -60,7 +60,7 @@ std::shared_ptr<ImageHelper> ImageHelper::with(brls::Image* view) {
 }
 
 void ImageHelper::load(std::string url) {
-    this->imageUrl = url;
+    this->imageUrl = bilibili::HTTP::VERIFY.verify ? url :pystring::replace(url, "https", "http", 1);
 
     brls::Logger::verbose("load view: {} {}", (size_t)this->imageView, (size_t)this);
 
