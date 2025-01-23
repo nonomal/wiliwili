@@ -258,15 +258,17 @@ void BilibiliClient::get_danmaku(uint64_t cid, const std::function<void(std::str
                                  const ErrorCallback& error) {
     cpr::GetCallback<>(
         [callback, error](const cpr::Response& r) {
+            if (r.status_code != 200) {
+                ERROR_MSG(r.error.message, r.status_code);
+                return;
+            }
             try {
                 callback(r.text);
             } catch (const std::exception& e) {
-                ERROR_MSG("Network error. [Status code: " + std::to_string(r.status_code) + " ]", r.status_code);
-                printf("data: %s\n", r.text.c_str());
-                printf("ERROR: %s\n", e.what());
+                ERROR_MSG(e.what(), -1);
             }
         },
-        cpr::Url{Api::VideoDanmaku}, cpr::Parameters({{"oid", std::to_string(cid)}}), CPR_HTTP_BASE);
+        cpr::Url{HTTP::PROTOCOL + Api::VideoDanmaku}, cpr::Parameters({{"oid", std::to_string(cid)}}), CPR_HTTP_BASE);
 }
 
 void BilibiliClient::get_highlight_progress(uint64_t cid,
@@ -275,7 +277,7 @@ void BilibiliClient::get_highlight_progress(uint64_t cid,
     cpr::GetCallback<>(
         [callback, error](const cpr::Response& r) {
             if (r.status_code != 200) {
-                ERROR_MSG("Network error", r.status_code);
+                ERROR_MSG(r.error.message, r.status_code);
                 return;
             }
             try {
@@ -285,7 +287,7 @@ void BilibiliClient::get_highlight_progress(uint64_t cid,
                 ERROR_MSG(e.what(), -1);
             }
         },
-        cpr::Url{Api::VideoHighlight}, cpr::Parameters({{"cid", std::to_string(cid)}}), CPR_HTTP_BASE);
+        cpr::Url{HTTP::PROTOCOL + Api::VideoHighlight}, cpr::Parameters({{"cid", std::to_string(cid)}}), CPR_HTTP_BASE);
 }
 
 void BilibiliClient::get_subtitle(const std::string& link, const std::function<void(SubtitleData)>& callback,
