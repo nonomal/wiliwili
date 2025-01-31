@@ -288,11 +288,12 @@ void RecyclingGrid::reloadData() {
     if (!layouted) return;
 
     // 将所有节点从屏幕上移除放入重复利用的列表中
-    auto children = this->contentBox->getChildren();
+    auto &children = this->contentBox->getChildren();
     for (auto const& child : children) {
         queueReusableCell((RecyclingGridItem*)child);
-        this->removeCell(child);
+        child->willDisappear(true);
     }
+    children.clear();
 
     visibleMin = UINT_MAX;
     visibleMax = 0;
