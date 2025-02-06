@@ -12,6 +12,7 @@
 #endif
 #endif
 
+#include <cmath>
 #include <borealis/core/application.hpp>
 #include <borealis/core/cache_helper.hpp>
 #include <borealis/core/touch/pan_gesture.hpp>
@@ -381,7 +382,7 @@ void ProgramConfig::loadHomeWindowState() {
 }
 
 void ProgramConfig::saveHomeWindowState() {
-    if (isnan(VideoContext::posX) || isnan(VideoContext::posY)) return;
+    if (std::isnan(VideoContext::posX) || std::isnan(VideoContext::posY)) return;
     if (VideoContext::FULLSCREEN) return;
     auto videoContext = brls::Application::getPlatform()->getVideoContext();
 

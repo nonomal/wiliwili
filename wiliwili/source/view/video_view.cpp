@@ -3,6 +3,7 @@
 //
 
 #include <limits>
+#include <cmath>
 
 #include <borealis/views/label.hpp>
 #include <borealis/views/progress_spinner.hpp>
@@ -1119,7 +1120,7 @@ void VideoView::refreshToggleIcon() {
 
 void VideoView::setProgress(float value) {
     if (is_seeking) return;
-    if (isnan(value)) return;
+    if (std::isnan(value)) return;
     this->osdSlider->setProgress(value);
 }
 

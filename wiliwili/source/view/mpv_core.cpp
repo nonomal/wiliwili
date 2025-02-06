@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <clocale>
+#include <cmath>
 #include <pystring.h>
 #include <borealis/core/thread.hpp>
 #include <borealis/core/application.hpp>
@@ -625,7 +626,7 @@ void MPVCore::initializeVideo() {
 
 void MPVCore::setFrameSize(brls::Rect r) {
     rect = r;
-    if (isnan(rect.getWidth()) || isnan(rect.getHeight())) return;
+    if (std::isnan(rect.getWidth()) || std::isnan(rect.getHeight())) return;
 
 #ifdef MPV_SW_RENDER
 #ifdef BOREALIS_USE_D3D11

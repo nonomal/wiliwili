@@ -7,6 +7,8 @@
 #include <utility>
 #include <codecvt>
 #include <locale>
+#include <cmath>
+#include <yoga/YGNode.h>
 #include <borealis/core/application.hpp>
 
 #include "view/text_box.hpp"
@@ -93,7 +95,7 @@ static YGSize textBoxMeasureFunc(YGNodeRef node, float width, YGMeasureMode widt
     };
 
     if (heightMode == YGMeasureMode::YGMeasureModeExactly) return size;
-    if (richTextData.empty() || isnan(width)) return size;
+    if (richTextData.empty() || std::isnan(width)) return size;
 
     size.height = textBox->cutRichTextLines(width);
     textBox->setParsedDone(true);
@@ -162,7 +164,7 @@ void TextBox::setText(const std::string& value) {
 
 void TextBox::onLayout() {
     float width = getWidth();
-    if (isnan(width) || width == 0) return;
+    if (std::isnan(width) || width == 0) return;
     if (this->richContent.empty()) return;
     if (!this->parsedDone) this->cutRichTextLines(width);
 }

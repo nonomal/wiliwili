@@ -2,6 +2,7 @@
 // Created by fang on 2023/1/6.
 //
 
+#include <cmath>
 #include <utility>
 #include <borealis/views/applet_frame.hpp>
 #include <borealis/core/touch/tap_gesture.hpp>
@@ -299,7 +300,7 @@ void PlayerSingleComment::setCommentData(const bilibili::VideoCommentResult& res
 }
 
 void PlayerSingleComment::showStartAnimation(float y) {
-    if (isnan(y)) return;
+    if (std::isnan(y)) return;
     commentOriginalPosition = y;
 
     brls::Application::blockInputs();
