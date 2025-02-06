@@ -458,13 +458,7 @@ void DanmakuCore::drawMask(NVGcontext *vg, float x, float y, float width, float 
     if (maskLastIndex != maskIndex) {
         maskLastIndex = maskIndex;
         // 生成新的纹理
-        auto &svg = slice.svgData[maskIndex];
-        // 给图片添加一圈边框（避免图片边沿为透明时自动扩展了透明色导致非视频区域无法显示弹幕）
-        // 注：返回的 svg 底部固定留有 2像素 透明，不是很清楚具体作用，这里选择绘制一个2像素宽的空心矩形来覆盖
-        const std::string border =
-            R"xml(<rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#000" stroke-width="2"/></svg>)xml";
-        auto maskDocument =
-            lunasvg::Document::loadFromData(pystring::slice(svg.svg, 0, pystring::rindex(svg.svg, "</svg>")) + border);
+        auto maskDocument = lunasvg::Document::loadFromData(slice.svgData[maskIndex].svg);
         if (maskDocument == nullptr) return;
         auto bitmap = maskDocument->renderToBitmap(maskDocument->width(), maskDocument->height());
         maskWidth   = bitmap.width();
@@ -519,9 +513,13 @@ void DanmakuCore::drawMask(NVGcontext *vg, float x, float y, float width, float 
         }
     }
 
+    // 返回的 svg 底部固定留有1像素高度透明 (不是很清楚具体作用)
+    // 拉伸图片纹理1像素高度，绘制时舍弃掉这部分
+    float offsetY = drawHeight / maskHeight;
+
     /// 遮罩绘制
-    auto paint = nvgImagePattern(vg, drawX, drawY, drawWidth, drawHeight, 0, maskTex, 1.0f);
-    nvgRect(vg, x, y, width, height);
+    auto paint = nvgImagePattern(vg, drawX, drawY, drawWidth, drawHeight + offsetY, 0, maskTex, 1.0f);
+    nvgRect(vg, drawX, drawY, drawWidth, drawHeight);
     nvgFillPaint(vg, paint);
 #if defined(DEBUG_MASK)
     nvgFill(vg);
