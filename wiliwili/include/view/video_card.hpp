@@ -19,6 +19,7 @@ protected:
     BRLS_BIND(brls::Image, picture, "video/card/picture");
 };
 
+/// 通用卡片: 普通视频/每周必看/入站必刷 视频卡片
 class RecyclingGridItemVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemVideoCard();
@@ -94,6 +95,7 @@ private:
     BRLS_BIND(brls::Label, labelAchievement, "video/card/label/achievement");
 };
 
+/// 热门-排行榜 视频卡片
 class RecyclingGridItemRankVideoCard : public BaseVideoCard {
 public:
     explicit RecyclingGridItemRankVideoCard(std::string res = "xml/views/video_card_rank.xml");
@@ -116,6 +118,7 @@ private:
     BRLS_BIND(brls::Box, boxPic, "video/card/pic_box");
 };
 
+/// 直播推荐 视频卡片
 class RecyclingGridItemLiveVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemLiveVideoCard();
@@ -137,6 +140,7 @@ private:
     BRLS_BIND(SVGImage, svgUp, "video/svg/up");
 };
 
+/// 追番/影视 视频卡片 (可横可竖)
 class RecyclingGridItemPGCVideoCard : public BaseVideoCard {
 public:
     explicit RecyclingGridItemPGCVideoCard(bool vertical_cover = true);
@@ -164,6 +168,7 @@ private:
     bool vertical_cover = true;
 };
 
+/// 搜索页 番剧/电影 视频卡片
 class RecyclingGridItemSearchPGCVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemSearchPGCVideoCard();
@@ -196,6 +201,7 @@ private:
     BRLS_BIND(brls::Box, boxPic, "video/card/pic_box");
 };
 
+/// 追番/影视 各列表最后一项 "查看全部" 卡片
 class RecyclingGridItemViewMoreCard : public RecyclingGridItem {
 public:
     explicit RecyclingGridItemViewMoreCard(bool vertical_cover = true);
@@ -214,6 +220,7 @@ private:
     bool vertical_cover = true;
 };
 
+/// 历史记录 视频卡片
 class RecyclingGridItemHistoryVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemHistoryVideoCard();
@@ -239,6 +246,7 @@ private:
     BRLS_BIND(brls::Rectangle, rectProgress, "video/card/progress");
 };
 
+/// 我的收藏/我的订阅 视频卡片
 class RecyclingGridItemCollectionVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemCollectionVideoCard();
@@ -258,6 +266,7 @@ private:
     BRLS_BIND(brls::Box, boxPic, "video/card/pic_box");
 };
 
+/// 播放页 推荐/投稿 视频卡片
 class RecyclingGridItemRelatedVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemRelatedVideoCard();
@@ -284,6 +293,7 @@ private:
     BRLS_BIND(brls::Box, boxCharging, "video/card/box/charging");
 };
 
+/// 播放页 影视/番剧 系列剧集卡片
 class RecyclingGridItemSeasonSeriesVideoCard : public BaseVideoCard {
 public:
     RecyclingGridItemSeasonSeriesVideoCard();
