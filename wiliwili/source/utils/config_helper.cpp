@@ -55,6 +55,24 @@ extern in_addr_t secondary_dns;
 #define PATH_MAX 256
 #endif
 
+#ifdef __PSV__
+#define WILI_VIDEO_QUALITY_DEFAULT 32
+#define WILI_VIDEO_QUALITY_LANDSCAPE_MAX 64
+#define WILI_VIDEO_QUALITY_PORTRAIT_MAX 32
+#define WILI_WINDOW_WIDTH_DEFAULT 960
+#define WILI_WINDOW_HEIGHT_DEFAULT 544
+#define WILI_UI_SCALE_DEFAULT 0
+#define WILI_AUDIO_QUALITY_DEFAULT 2
+#else
+#define WILI_VIDEO_QUALITY_DEFAULT 116
+#define WILI_VIDEO_QUALITY_LANDSCAPE_MAX 128
+#define WILI_VIDEO_QUALITY_PORTRAIT_MAX 128
+#define WILI_WINDOW_WIDTH_DEFAULT 1280
+#define WILI_WINDOW_HEIGHT_DEFAULT 720
+#define WILI_UI_SCALE_DEFAULT 1
+#define WILI_AUDIO_QUALITY_DEFAULT 0
+#endif
+
 using namespace brls::literals;
 
 std::unordered_map<SettingItem, ProgramOption> ProgramConfig::SETTING_MAP = {
@@ -82,15 +100,7 @@ std::unordered_map<SettingItem, ProgramOption> ProgramConfig::SETTING_MAP = {
 #endif
     {SettingItem::APP_THEME, {"app_theme", {"auto", "light", "dark"}, {}, 0}},
     {SettingItem::APP_RESOURCES, {"app_resources", {}, {}, 0}},
-    {SettingItem::APP_UI_SCALE,
-     {"app_ui_scale",
-      {"544p", "720p", "900p", "1080p"},
-      {},
-#ifdef __PSV__
-      0}},
-#else
-      1}},
-#endif
+    {SettingItem::APP_UI_SCALE, {"app_ui_scale", {"544p", "720p", "900p", "1080p"}, {}, WILI_UI_SCALE_DEFAULT}},
     {SettingItem::KEYMAP, {"keymap", {"xbox", "ps", "keyboard"}, {}, 0}},
     {SettingItem::HOME_WINDOW_STATE, {"home_window_state", {}, {}, 0}},
     {SettingItem::DLNA_IP, {"dlna_ip", {}, {}, 0}},
@@ -170,6 +180,8 @@ std::unordered_map<SettingItem, ProgramOption> ProgramConfig::SETTING_MAP = {
     {SettingItem::PLAYER_VOLUME, {"player_volume", {}, {}, 0}},
     {SettingItem::TEXTURE_CACHE_NUM, {"texture_cache_num", {}, {}, 0}},
     {SettingItem::VIDEO_QUALITY, {"video_quality", {}, {}, 116}},
+    {SettingItem::VIDEO_QUALITY_LANDSCAPE_MAX, {"video_quality_landscape_max", {}, {}, 128}},
+    {SettingItem::VIDEO_QUALITY_PORTRAIT_MAX, {"video_quality_portrait_max", {}, {}, 128}},
     {SettingItem::IMAGE_REQUEST_THREADS,
      {"image_request_threads",
 #if defined(__SWITCH__) || defined(__PSV__)
@@ -184,14 +196,7 @@ std::unordered_map<SettingItem, ProgramOption> ProgramConfig::SETTING_MAP = {
     {SettingItem::VIDEO_FORMAT, {"file_format", {"Dash (AVC/HEVC/AV1)", "FLV/MP4"}, {4048, 0}, 0}},
     {SettingItem::VIDEO_CODEC, {"video_codec", {"AVC/H.264", "HEVC/H.265", "AV1"}, {7, 12, 13}, 0}},
     {SettingItem::AUDIO_QUALITY,
-     {"audio_quality",
-      {"High", "Medium", "Low"},
-      {30280, 30232, 30216},
-#if defined(__PSV__)
-      2}},
-#else
-      0}},
-#endif
+     {"audio_quality", {"High", "Medium", "Low"}, {30280, 30232, 30216}, WILI_AUDIO_QUALITY_DEFAULT}},
     {SettingItem::DANMAKU_FILTER_LEVEL,
      {"danmaku_filter_level", {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 0}},
     {SettingItem::DANMAKU_STYLE_AREA, {"danmaku_style_area", {"1/4", "1/2", "3/4", "1"}, {25, 50, 75, 100}, 3}},
@@ -461,22 +466,19 @@ void ProgramConfig::load() {
         brls::Application::ORIGINAL_WINDOW_WIDTH  = 1920;
         brls::Application::ORIGINAL_WINDOW_HEIGHT = 1080;
     } else {
-#ifdef __PSV__
-        brls::Application::ORIGINAL_WINDOW_WIDTH  = 960;
-        brls::Application::ORIGINAL_WINDOW_HEIGHT = 544;
-#else
-        brls::Application::ORIGINAL_WINDOW_WIDTH  = 1280;
-        brls::Application::ORIGINAL_WINDOW_HEIGHT = 720;
-#endif
+        brls::Application::ORIGINAL_WINDOW_WIDTH  = WILI_WINDOW_WIDTH_DEFAULT;
+        brls::Application::ORIGINAL_WINDOW_HEIGHT = WILI_WINDOW_HEIGHT_DEFAULT;
     }
+
+    // 初始化视频清晰度最高限制
+    VideoDetail::landscapeQualityMax = getSettingItem(SettingItem::VIDEO_QUALITY_LANDSCAPE_MAX,
+                                                      WILI_VIDEO_QUALITY_LANDSCAPE_MAX);
+    VideoDetail::portraitQualityMax  = getSettingItem(SettingItem::VIDEO_QUALITY_PORTRAIT_MAX,
+                                                      WILI_VIDEO_QUALITY_PORTRAIT_MAX);
 
     // 初始化视频清晰度
     VideoDetail::defaultQuality = getSettingItem(SettingItem::VIDEO_QUALITY,
-#ifdef __PSV__
-                                                 32);
-#else
-                                                 116);
-#endif
+                                                 WILI_VIDEO_QUALITY_DEFAULT);
     if (!hasLoginInfo()) {
         // 用户未登录时跟随官方将默认清晰度设置到 360P
         VideoDetail::defaultQuality = 16;

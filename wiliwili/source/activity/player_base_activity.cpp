@@ -540,7 +540,15 @@ void BasePlayerActivity::onVideoPlayUrl(const bilibili::VideoUrlResult& result) 
 
         // 找到当前可用的清晰度
         for (const auto& i : result.dash.video) {
-            if (result.quality >= i.id) {
+            int desiredQuality = result.quality;
+            // 若设置了过高的清晰度, 自动切换到合适的清晰度, 默认为 128 (即无限制)
+            if (i.height > i.width) {
+                desiredQuality = std::min(desiredQuality, portraitQualityMax);
+            } else {
+                desiredQuality = std::min(desiredQuality, landscapeQualityMax);
+            }
+
+            if (desiredQuality >= i.id) {
                 videoUrlResult.quality = i.id;
                 break;
             }
