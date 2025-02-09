@@ -496,7 +496,7 @@ void RecyclingGridItemSeasonSeriesVideoCard::setCard(const std::string& pic, con
     this->labelLike->setText(likeCount);
     this->badgeTop->setText(badge);
 
-    if (badge_color.empty()) {
+    if (badge_color.empty() || badge.empty()) {
         this->boxTop->setVisibility(brls::Visibility::GONE);
     } else {
         this->boxTop->setVisibility(brls::Visibility::VISIBLE);
