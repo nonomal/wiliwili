@@ -88,6 +88,7 @@ enum class SettingItem {
     HOME_WINDOW_STATE,
     SEARCH_TV_MODE,
     LIMITED_FPS,
+    SWAP_INTERVAL,
     DEACTIVATED_TIME,
     DEACTIVATED_FPS,
     DLNA_IP,

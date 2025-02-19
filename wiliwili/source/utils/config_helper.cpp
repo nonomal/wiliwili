@@ -254,6 +254,7 @@ std::unordered_map<SettingItem, ProgramOption> ProgramConfig::SETTING_MAP = {
     {SettingItem::DANMAKU_RENDER_QUALITY,
      {"danmaku_render_quality", {"100%", "95%", "90%", "80%", "70%", "60%", "50%"}, {100, 95, 90, 80, 70, 60, 50}, 0}},
     {SettingItem::LIMITED_FPS, {"limited_fps", {"0", "30", "60", "90", "120"}, {0, 30, 60, 90, 120}, 0}},
+    {SettingItem::SWAP_INTERVAL, {"swap_interval", {"0", "1", "2", "3", "4"}, {0, 1, 2, 3, 4}, 1}},
     {SettingItem::DEACTIVATED_TIME, {"deactivated_time", {}, {}, 0}},
     {SettingItem::DEACTIVATED_FPS, {"deactivated_fps", {}, {}, 0}},
     {SettingItem::DLNA_PORT, {"dlna_port", {}, {}, 0}},
@@ -647,7 +648,9 @@ void ProgramConfig::load() {
 #endif
 
     // 初始化FPS限制
-    brls::Application::setLimitedFPS(getSettingItem(SettingItem::LIMITED_FPS, 0));
+    int limitedFPS = getSettingItem(SettingItem::LIMITED_FPS, 0);
+    brls::Application::setLimitedFPS(limitedFPS);
+    VideoContext::swapInterval = limitedFPS == 0 ? getSettingItem(SettingItem::SWAP_INTERVAL, 1) : 0;
 
     // 初始化进入闲置状态需要的时间 (ms);
     int deactivatedTime = getSettingItem(SettingItem::DEACTIVATED_TIME, 0);
