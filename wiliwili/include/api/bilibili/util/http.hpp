@@ -34,8 +34,9 @@ public:
     CurlSharedObject() {
         share = curl_share_init();
         curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
-        curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
-        curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_CONNECT);
+        // TODO: 下列两个选线不支持多线程，需要实现自定义线程池，每个线程共享一个 curl share 对象
+        // curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
+        // curl_share_setopt(share, CURLSHOPT_SHARE, CURL_LOCK_DATA_CONNECT);
         curl_share_setopt(share, CURLSHOPT_LOCKFUNC, lock_callback);
         curl_share_setopt(share, CURLSHOPT_UNLOCKFUNC, unlock_callback);
         curl_share_setopt(share, CURLSHOPT_USERDATA, lock_array);

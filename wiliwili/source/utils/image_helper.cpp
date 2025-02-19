@@ -190,6 +190,7 @@ void ImageHelper::load(const std::string &url) {
 }
 
 static inline void freeImageData(uint8_t* imageData, bool isWebp) {
+    if (!imageData) return;
 #ifdef USE_WEBP
     if (isWebp)
         WebPFree(imageData);
@@ -244,14 +245,16 @@ void ImageHelper::requestImage() {
 #endif
 
 #ifdef BOREALIS_USE_GXM
-    bool dxt5 = this->imageFlag & NVG_IMAGE_DXT5;
-    size_t size = nearest_po2(imageW) * nearest_po2(imageH);
-    if (!dxt5)
-        size >> 1;
-    auto *compressed = (uint8_t *)malloc(size);
-    dxt_compress(compressed, imageData, imageW, imageH, dxt5);
-    freeImageData(imageData, isWebp);
-    imageData = compressed;
+    if (imageData) {
+        bool dxt5 = this->imageFlag & NVG_IMAGE_DXT5;
+        size_t size = nearest_po2(imageW) * nearest_po2(imageH);
+        if (!dxt5)
+            size >> 1;
+        auto *compressed = (uint8_t *)malloc(size);
+        dxt_compress(compressed, imageData, imageW, imageH, dxt5);
+        freeImageData(imageData, isWebp);
+        imageData = compressed;
+    }
 #endif
 
     brls::sync([this, r, imageData, imageW, imageH, isWebp]() {
