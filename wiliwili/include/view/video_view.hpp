@@ -337,6 +337,7 @@ private:
     bool is_osd_shown          = false;
     bool is_osd_lock           = false;
     bool hide_lock_button      = false;
+    bool is_focus_on_osd       = false;
     // 区别于视频的时长，当 real_duration 大于 0 时，播放器进度条的总时长以此为准而不是以视频的实际时长为准
     // 用于正确显示预览视频的进度条，比如付费电影的预览
     int real_duration          = 0;

@@ -1286,8 +1286,9 @@ void VideoView::buttonProcessing() {
     input->updateUnifiedControllerState(&state);
 
     // 当OSD显示时上下左右切换选择按钮，持续显示OSD
-    if (isOSDShown() && (state.buttons[brls::BUTTON_NAV_RIGHT] || state.buttons[brls::BUTTON_NAV_LEFT] ||
-                         state.buttons[brls::BUTTON_NAV_UP] || state.buttons[brls::BUTTON_NAV_DOWN])) {
+    if (is_focus_on_osd && isOSDShown() &&
+        (state.buttons[brls::BUTTON_NAV_RIGHT] || state.buttons[brls::BUTTON_NAV_LEFT] ||
+         state.buttons[brls::BUTTON_NAV_UP] || state.buttons[brls::BUTTON_NAV_DOWN])) {
         if (this->osd_state == OSDState::SHOWN) this->showOSD(true);
     }
     if (is_osd_lock) return;
@@ -1473,7 +1474,8 @@ void VideoView::onChildFocusGained(View* directChild, View* focusedView) {
         return;
     }
     // 只有在全屏显示OSD时允许OSD组件获取焦点
-    if (this->isFullscreen() && isOSDShown()) {
+    is_focus_on_osd = isFullscreen() && isOSDShown();
+    if (is_focus_on_osd) {
         // 当弹幕按钮隐藏时不可获取焦点
         if (focusedView->getParent()->getVisibility() == brls::Visibility::GONE) {
             brls::Application::giveFocus(this);
