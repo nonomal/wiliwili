@@ -647,9 +647,9 @@ VideoView::~VideoView() {
 void VideoView::draw(NVGcontext* vg, float x, float y, float width, float height, brls::Style style,
                      brls::FrameContext* ctx) {
     if (!mpvCore->isValid()) return;
-    float alpha    = this->getAlpha();
-    time_t current = wiliwili::unix_time();
-    bool drawOSD   = current < this->osdLastShowTime;
+    float alpha        = this->getAlpha();
+    brls::Time current = brls::getCPUTimeUsec();
+    bool drawOSD       = this->osd_state == OSDState::ALWAYS_ON || current < this->osdLastShowTime;
 
     // draw video
     mpvCore->draw(brls::Rect(x, y, width, height), alpha);
@@ -905,15 +905,11 @@ int64_t VideoView::getLastPlayedPosition() const { return lastPlayedPosition; }
 /// OSD
 void VideoView::showOSD(bool temp) {
     if (temp) {
-        this->osdLastShowTime = wiliwili::unix_time() + VideoView::OSD_SHOW_TIME;
+        this->osdLastShowTime = brls::getCPUTimeUsec() + VideoView::OSD_SHOW_TIME * 1000;
         this->osd_state       = OSDState::SHOWN;
     } else {
-#ifdef __WINRT__
-        this->osdLastShowTime = 0xffffffff;
-#else
-        this->osdLastShowTime = (std::numeric_limits<std::time_t>::max)();
-#endif
-        this->osd_state = OSDState::ALWAYS_ON;
+        this->osdLastShowTime = 0;
+        this->osd_state       = OSDState::ALWAYS_ON;
     }
 }
 
@@ -1134,7 +1130,7 @@ void VideoView::showHint(const std::string& value) {
     brls::Logger::debug("Video hint: {}", value);
     this->hintLabel->setText(value);
     this->hintBox->setVisibility(brls::Visibility::VISIBLE);
-    this->hintLastShowTime = wiliwili::unix_time() + VideoView::OSD_SHOW_TIME;
+    this->hintLastShowTime = brls::getCPUTimeUsec() + VideoView::OSD_SHOW_TIME * 1000;
     this->showOSD();
 }
 

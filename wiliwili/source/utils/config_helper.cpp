@@ -264,6 +264,7 @@ std::unordered_map<SettingItem, ProgramOption> ProgramConfig::SETTING_MAP = {
     {SettingItem::PLAYER_SATURATION, {"player_saturation", {}, {}, 0}},
     {SettingItem::PLAYER_HUE, {"player_hue", {}, {}, 0}},
     {SettingItem::PLAYER_GAMMA, {"player_gamma", {}, {}, 0}},
+    {SettingItem::PLAYER_OSD_HIDE, {"player_osd_hide", {}, {}, 0}},
     {SettingItem::MINIMUM_WINDOW_WIDTH, {"minimum_window_width", {"480"}, {480}, 0}},
     {SettingItem::MINIMUM_WINDOW_HEIGHT, {"minimum_window_height", {"270"}, {270}, 0}},
     {SettingItem::ON_TOP_WINDOW_WIDTH, {"on_top_window_width", {"480"}, {480}, 0}},
@@ -609,6 +610,9 @@ void ProgramConfig::load() {
 
     // 播放结束时自动退出全屏
     VideoView::EXIT_FULLSCREEN_ON_END = getBoolOption(SettingItem::PLAYER_EXIT_FULLSCREEN_ON_END);
+
+    // 初始化播放器 OSD 自动隐藏时间
+    VideoView::OSD_SHOW_TIME = getSettingItem(SettingItem::PLAYER_OSD_HIDE, 5000);
 
     // 初始化内存缓存大小
     MPVCore::INMEMORY_CACHE = getIntOption(SettingItem::PLAYER_INMEMORY_CACHE);
