@@ -320,7 +320,8 @@ void SettingActivity::onContentAvailable() {
     int swapInterval = conf.getSettingItem(SettingItem::SWAP_INTERVAL, 1);
     int limitedFPS = conf.getSettingItem(SettingItem::LIMITED_FPS, 0);
     int fpsIndex = conf.getIntOptionIndex(SettingItem::LIMITED_FPS);
-    if ((limitedFPS > 0 && fpsIndex == 0) || swapInterval < 0 || swapInterval > 4) {
+    if ((limitedFPS > 0 && fpsIndex == 0) || (swapInterval == 0 && fpsIndex == 0) ||
+        swapInterval < 0 || swapInterval > 4) {
         // 用户自定义配置
         selectorFPS->setVisibility(brls::Visibility::GONE);
     } else if (limitedFPS == 0) {
