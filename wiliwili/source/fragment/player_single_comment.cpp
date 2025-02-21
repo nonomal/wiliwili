@@ -118,7 +118,10 @@ public:
         view->likeClickEvent.subscribe([this, item, index](size_t action) {
             auto& itemData  = dataList[index];
             // 点赞/取消点赞 或 点踩/取消点踩
-            bool isLike = action == 1 || (action == 0 & itemData.action == 1);
+
+            // 是点赞相关的操作，当前状态为点赞，或者取消点赞
+            bool isLike = action == 1 || (action == 0 && itemData.action == 1);
+
             if (action == 1) {
                 // 最新状态变为点赞，点赞数 +1
                 itemData.like++;
