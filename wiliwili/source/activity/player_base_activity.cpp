@@ -316,7 +316,7 @@ void BasePlayerActivity::setCommonData() {
                     }
 
                     // 播放到一半没网时也会触发EOF，这里简单判断一下结束播放时的播放条位置是否在片尾或视频结尾附近
-                    if (fabs(duration - progress) > 5 && !(clipEnd > 0 && clipEnd - progress < 5)) {
+                    if ((duration - progress > 5 || progress - duration > 5) && !(clipEnd > 0 && clipEnd - progress < 5)) {
                         brls::Logger::error("EOF: video: {} duration: {} clipEnd: {}", progress, duration, clipEnd);
                         return;
                     }

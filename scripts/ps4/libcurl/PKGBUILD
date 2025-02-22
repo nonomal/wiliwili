@@ -27,7 +27,7 @@ build() {
   CFLAGS="${CFLAGS} -DSOL_IP=0" LIBS="${LIBS} -lSceNet" \
   ./configure --prefix="${OPENORBIS}/usr" --host=x86_64 \
     --disable-shared --enable-static --disable-unix-sockets \
-    --with-mbedtls --disable-manual
+    --with-mbedtls --disable-manual --with-ca-bundle="/system/common/cert/CA_LIST.cer"
 
   # TODO: fix this (use proper patch)...
   sed -i 's|#include <osreldate.h>|//#include <osreldate.h>|g' include/curl/curl.h
