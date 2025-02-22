@@ -322,6 +322,7 @@ void BasePlayerActivity::setCommonData() {
                     }
                     if (PLAYER_STRATEGY == PlayerStrategy::LOOP) {
                         MPVCore::instance().seek(0);
+                        MPVCore::instance().resume();
                         return;
                     }
                     auto stack    = brls::Application::getActivitiesStack();
