@@ -11,9 +11,9 @@
         <brls:Image
                 id="video/card/picture"
                 scalingType="fill"
-                backgroundColor="@theme/color/grey_1"
                 height="100%"
                 width="100%"
+                image="@res/pictures/video-card-bg.png"
                 cornerRadius="4"/>
 
         <brls:Box
@@ -28,22 +28,20 @@
             <SVGImage
                     width="18"
                     height="18"
-                    marginTop="2"
+                    marginTop="-1"
                     SVG="@res/svg/widget-people.svg"/>
             <brls:Label
                     marginLeft="4"
                     marginRight="4"
                     textColor="#FFFFFF"
                     id="video/card/label/count"
-                    fontSize="16"
-                    text=""/>
+                    fontSize="16"/>
             <brls:Label
                     id="video/card/label/duration"
                     positionType="absolute"
-                    positionRight="0"
+                    positionRight="10"
                     textColor="#FFFFFF"
-                    fontSize="16"
-                    text=""/>
+                    fontSize="16"/>
         </brls:Box>
 
     </brls:Box>
@@ -56,6 +54,7 @@
                 id="video/card/label/title"
                 fontSize="20"
                 lineHeight="1.5"
+                maxRows="1"
                 width="100%"
                 height="30"/>
         <brls:Box
@@ -67,6 +66,7 @@
                     id="video/card/hint"
                     height="18"
                     marginTop="2"
+                    shrink="0"
                     backgroundColor="@theme/color/yellow_1"
                     cornerRadius="4"
                     justifyContent="center"

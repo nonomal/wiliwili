@@ -13,17 +13,17 @@
         <brls:Box
                 id="video_detail_left_box"
                 margin="10"
-                width="800"
+                width="@style/wiliwili/player/width"
                 height="auto"
                 wireframe="false"
                 axis="column">
 
             <VideoView
-                    id="video/detail/video"
+                    id="video"
                     focusable="true"
                     focusDown="video_detail_info_box"
                     grow="1"
-                    width="800"
+                    width="@style/wiliwili/player/width"
                     height="auto"/>
 
             <!--                        视频下方相关信息-->
@@ -47,15 +47,9 @@
                             wireframe="false"
                             fontSize="24"
                             marginLeft="10"
-                            singleLine="true"
-                            text=""/>
+                            singleLine="true"/>
                 </brls:Box>
 
-                <brls:Rectangle
-                        width="auto"
-                        height="1"
-                        margin="4"
-                        color="@theme/color/line"/>
 
                 <brls:Box
                         id="video_detail_info_box"
@@ -117,11 +111,14 @@
                                 padding="4"
                                 axis="column"
                                 alignItems="center"
+                                width="56"
+                                height="56"
                                 focusable="true">
                             <SVGImage
                                     id="video/btn/coin"
-                                    width="48"
-                                    height="48"/>
+                                    positionTop="4"
+                                    width="40"
+                                    height="40"/>
                             <brls:Label
                                     id="video/label/coin"
                                     positionType="absolute"
@@ -139,13 +136,16 @@
                                 highlightCornerRadius="50"
                                 cornerRadius="50"
                                 padding="4"
+                                width="56"
+                                height="56"
                                 axis="column"
                                 alignItems="center"
                                 focusable="true">
                             <SVGImage
                                     id="video/btn/favorite"
-                                    width="48"
-                                    height="48"/>
+                                    positionTop="4"
+                                    width="40"
+                                    height="40"/>
                             <brls:Label
                                     id="video/label/favorite"
                                     positionType="absolute"
@@ -163,13 +163,17 @@
                                 highlightCornerRadius="50"
                                 cornerRadius="50"
                                 padding="4"
+                                width="56"
+                                height="56"
                                 axis="column"
                                 alignItems="center"
                                 focusable="true">
                             <SVGImage
                                     id="video/btn/qr"
-                                    width="48"
-                                    height="48"/>
+                                    positionTop="4"
+                                    width="40"
+                                    height="40"
+                                    SVG="@res/svg/bpx-svg-sprite-share.svg"/>
                             <brls:Label
                                     id="video/label/qr"
                                     positionType="absolute"
@@ -203,7 +207,7 @@
                             marginTop="1"
                             textColor="@theme/font/grey"
                             id="video/count"
-                            fontSize="13"
+                            fontSize="@style/wiliwili/player/bottom/font"
                             text=""/>
                     <SVGImage
                             width="16"
@@ -215,7 +219,7 @@
                             marginTop="1"
                             id="video/danmaku"
                             textColor="@theme/font/grey"
-                            fontSize="13"
+                            fontSize="@style/wiliwili/player/bottom/font"
                             text=""/>
                     <brls:Box
                             visibility="gone"
@@ -229,7 +233,7 @@
                                 marginLeft="4"
                                 marginRight="4"
                                 textColor="@theme/font/grey"
-                                fontSize="13"
+                                fontSize="@style/wiliwili/player/bottom/font"
                                 text=""/>
                     </brls:Box>
                     <SVGImage
@@ -242,7 +246,7 @@
                             marginTop="1"
                             id="video/people"
                             textColor="@theme/font/grey"
-                            fontSize="13"
+                            fontSize="@style/wiliwili/player/bottom/font"
                             text="N人正在看"/>
                     <SVGImage
                             width="16"
@@ -254,7 +258,7 @@
                             marginTop="1"
                             id="video/time"
                             textColor="@theme/font/grey"
-                            fontSize="13"
+                            fontSize="@style/wiliwili/player/bottom/font"
                             text="2022-01-01 20:00:00"/>
 
                     <brls:Label
@@ -262,7 +266,7 @@
                             marginLeft="4"
                             marginRight="4"
                             textColor="@theme/font/grey"
-                            fontSize="13"
+                            fontSize="@style/wiliwili/player/bottom/font"
                             text="WILIWILI"/>
 
                     <brls:Box
@@ -279,7 +283,7 @@
                                 marginRight="4"
                                 marginTop="1"
                                 textColor="@theme/font/grey"
-                                fontSize="13"
+                                fontSize="@style/wiliwili/player/bottom/font"
                                 text="@i18n/wiliwili/player/rights"/>
                     </brls:Box>
                 </brls:Box>
@@ -309,22 +313,27 @@
                 <Tab label="@i18n/wiliwili/player/comment"
                      fontSize="18">
                     <brls:Box
-                            width="100%"
-                            grow="1">
+                            marginTop="12">
                         <RecyclingGrid
                                 id="video/comment/recyclingGrid"
                                 paddingLeft="20"
-                                paddingRight="20"
+                                paddingRight="30"
                                 grow="1"
                                 spanCount="1"
+                                itemSpace="10"
                                 flowMode="true"
-                                itemHeight="416"
+                                itemHeight="100"
                                 wireframe="false"/>
                     </brls:Box>
                 </Tab>
             </AutoTabFrame>
 
         </brls:Box>
+
+        <ButtonClose
+                positionType="absolute"
+                positionTop="2"
+                positionRight="2"/>
 
     </brls:Box>
 

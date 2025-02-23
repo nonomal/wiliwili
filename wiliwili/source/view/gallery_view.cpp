@@ -2,22 +2,20 @@
 // Created by fang on 2022/8/21.
 //
 
+#include <cmath>
+#include <borealis/core/touch/tap_gesture.hpp>
+#include <borealis/core/application.hpp>
+#include <borealis/views/image.hpp>
+
 #include "view/gallery_view.hpp"
 
-const std::string galleryViewXML = R"xml(
-    <brls:Box
-            focusable="true">
-    </brls:Box>
-)xml";
-
 GalleryView::GalleryView() {
-    this->inflateFromXMLString(galleryViewXML);
     brls::Logger::debug("View GalleryView: create");
-    this->registerAction("Prev", brls::ControllerButton::BUTTON_LB,
-                         [this](brls::View* view) -> bool {
-                             prev();
-                             return true;
-                         });
+    this->setFocusable(true);
+    this->registerAction("Prev", brls::ControllerButton::BUTTON_LB, [this](brls::View* view) -> bool {
+        prev();
+        return true;
+    });
     this->registerAction(
         "Prev", brls::ControllerButton::BUTTON_LT,
         [this](brls::View* view) -> bool {
@@ -32,11 +30,10 @@ GalleryView::GalleryView() {
             return true;
         },
         true);
-    this->registerAction("Next", brls::ControllerButton::BUTTON_RB,
-                         [this](brls::View* view) -> bool {
-                             next();
-                             return true;
-                         });
+    this->registerAction("Next", brls::ControllerButton::BUTTON_RB, [this](brls::View* view) -> bool {
+        next();
+        return true;
+    });
     this->registerAction(
         "Next", brls::ControllerButton::BUTTON_RT,
         [this](brls::View* view) -> bool {
@@ -51,6 +48,19 @@ GalleryView::GalleryView() {
             return true;
         },
         true);
+
+    this->addGestureRecognizer(
+        new brls::TapGestureRecognizer([this](brls::TapGestureStatus status, brls::Sound* soundToPlay) {
+            if (status.state != brls::GestureState::END) return;
+            float width = getWidth();
+            float x     = getX();
+            if (std::isnan(width) || std::isnan(x)) return;
+            if (status.position.x < x + width * 0.25) {
+                this->prev();
+            } else if (status.position.x > x + width * 0.75) {
+                this->next();
+            }
+        }));
 }
 
 GalleryView::~GalleryView() { brls::Logger::debug("View GalleryView: delete"); }
@@ -61,17 +71,19 @@ void GalleryView::setData(GalleryData value) {
     this->clearViews();
     this->data = value;
 
-    if (value.size() == 0) return;
+    if (value.empty()) return;
 
     for (auto v : value) {
-        ImageGalleryItem* item = new ImageGalleryItem();
+        auto* item = new ImageGalleryItem();
         item->setData(v);
         item->setSize(brls::Size(getWidth(), getHeight()));
+        item->setPaddingLeft(getPaddingLeft());
+        item->setPaddingRight(getPaddingRight());
         this->addView(item, this->getChildren().size());
         brls::Logger::debug("GalleryView set Data: {}/{}", v.second, v.first);
     }
 
-    GalleryItem* first = (GalleryItem*)this->getChildren()[0];
+    auto* first = (GalleryItem*)this->getChildren()[0];
     first->setVisibility(brls::Visibility::VISIBLE);
     first->show([]() {}, true, 500);
     this->index = 0;
@@ -79,39 +91,42 @@ void GalleryView::setData(GalleryData value) {
 
 void GalleryView::addCustomView(GalleryItem* view) {
     view->setSize(brls::Size(getWidth(), getHeight()));
+    view->setPaddingLeft(getPaddingLeft());
+    view->setPaddingRight(getPaddingRight());
     this->addView(view, this->getChildren().size());
+    if (this->getChildren().size() == 1) {
+        auto* first = (GalleryItem*)this->getChildren()[0];
+        first->setVisibility(brls::Visibility::VISIBLE);
+        first->show([]() {}, true, 500);
+        this->index = 0;
+    }
 }
 
 void GalleryView::prev() {
     if (this->index <= 0) {
-        brls::Application::getCurrentFocus()->shakeHighlight(
-            brls::FocusDirection::LEFT);
+        brls::Application::getCurrentFocus()->shakeHighlight(brls::FocusDirection::LEFT);
         return;
     }
-    ((GalleryItem*)this->getChildren()[this->index])
-        ->animate(GalleryAnimation::EXIT_RIGHT);
+    ((GalleryItem*)this->getChildren()[this->index])->animate(GalleryAnimation::EXIT_RIGHT);
 
     this->index--;
-    ((GalleryItem*)this->getChildren()[this->index])
-        ->animate(GalleryAnimation::ENTER_LEFT);
+    ((GalleryItem*)this->getChildren()[this->index])->animate(GalleryAnimation::ENTER_LEFT);
 }
 
 void GalleryView::next() {
     if (this->index + 1 >= this->getChildren().size()) {
-        brls::Application::getCurrentFocus()->shakeHighlight(
-            brls::FocusDirection::RIGHT);
+        brls::Application::getCurrentFocus()->shakeHighlight(brls::FocusDirection::RIGHT);
         return;
     }
-    ((GalleryItem*)this->getChildren()[this->index])
-        ->animate(GalleryAnimation::EXIT_LEFT);
+    ((GalleryItem*)this->getChildren()[this->index])->animate(GalleryAnimation::EXIT_LEFT);
 
     this->index++;
-    ((GalleryItem*)this->getChildren()[this->index])
-        ->animate(GalleryAnimation::ENTER_RIGHT);
+    ((GalleryItem*)this->getChildren()[this->index])->animate(GalleryAnimation::ENTER_RIGHT);
 }
 
-void GalleryView::draw(NVGcontext* vg, float x, float y, float width,
-                       float height, brls::Style style,
+void GalleryView::setIndicatorPosition(float height) { this->indicatorPosition = height; }
+
+void GalleryView::draw(NVGcontext* vg, float x, float y, float width, float height, brls::Style style,
                        brls::FrameContext* ctx) {
     // Enable scissoring
     nvgSave(vg);
@@ -128,7 +143,7 @@ void GalleryView::draw(NVGcontext* vg, float x, float y, float width,
 
     auto drawW = padding * (n - 1) + circleR * 2 * n;
     auto drawX = (width - drawW) / 2 + getMarginLeft();
-    auto drawY = height * 0.98;
+    auto drawY = height * indicatorPosition;
 
     float offsetX = 0;
     for (unsigned int i = 0; i < n; i++) {
@@ -168,9 +183,7 @@ const std::string galleryItemXML = R"xml(
 
 /// ImageGalleryItem
 
-ImageGalleryItem::ImageGalleryItem() {
-    this->inflateFromXMLString(galleryItemXML);
-}
+ImageGalleryItem::ImageGalleryItem() { this->inflateFromXMLString(galleryItemXML); }
 
 void ImageGalleryItem::setData(GalleryItemData value) {
     this->data = value;
@@ -203,8 +216,7 @@ void GalleryItem::animate(GalleryAnimation animation) {
                 // 滑入屏幕时按需获取焦点
                 View* view = this->getDefaultFocus();
                 if (view) {
-                    brls::Logger::debug("GalleryItem defaultFocus: {}",
-                                        view->describe());
+                    brls::Logger::debug("GalleryItem defaultFocus: {}", view->describe());
                     brls::Application::giveFocus(view);
                 }
             }
@@ -237,10 +249,8 @@ void GalleryItem::startScrolling(float newScroll) {
 
     this->contentOffsetX.stop();
     this->contentOffsetX.reset();
-    this->contentOffsetX.addStep(newScroll, 500,
-                                 brls::EasingFunction::quadraticOut);
-    this->contentOffsetX.setTickCallback(
-        [this] { this->setTranslationX(this->contentOffsetX); });
+    this->contentOffsetX.addStep(newScroll, 500, brls::EasingFunction::quadraticOut);
+    this->contentOffsetX.setTickCallback([this] { this->setTranslationX(this->contentOffsetX); });
     this->contentOffsetX.start();
     this->invalidate();
 }

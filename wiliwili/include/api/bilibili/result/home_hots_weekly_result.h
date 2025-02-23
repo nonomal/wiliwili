@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "nlohmann/json.hpp"
+#include "bilibili/util/json.hpp"
 #include "user_result.h"
 #include "home_result.h"
 
@@ -17,8 +17,7 @@ public:
     int status;
     std::string name;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyResult, number, subject, status,
-                                   name);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyResult, number, subject, status, name);
 
 typedef std::vector<HotsWeeklyResult> HotsWeeklyListResult;
 
@@ -30,9 +29,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyResultWrapper, list);
 
 class HotsWeeklyVideoResult {
 public:
-    int aid;
+    uint64_t aid;
     std::string bvid;
-    int cid;
+    uint64_t cid;
     std::string pic;
     std::string title;
     int duration;
@@ -41,8 +40,7 @@ public:
     VideoSimpleStateResult stat;
     std::string rcmd_reason;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyVideoResult, aid, bvid, cid, pic,
-                                   title, duration, pubdate, owner, stat,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyVideoResult, aid, bvid, cid, pic, title, duration, pubdate, owner, stat,
                                    rcmd_reason);
 
 class HotsWeeklyConfig {
@@ -59,7 +57,6 @@ public:
     std::string reminder;
     HotsWeeklyVideoListResult list;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyVideoListResultWrapper, config,
-                                   reminder, list);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsWeeklyVideoListResultWrapper, config, reminder, list);
 
 };  // namespace bilibili

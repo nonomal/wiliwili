@@ -1,7 +1,5 @@
 <brls:Box
         width="auto"
-        height="100%"
-        grow="1.0"
         axis="column"
         marginLeft="8"
         alignItems="stretch">
@@ -13,7 +11,7 @@
             focusable="true"
             hideHighlightBackground="true"
             cornerRadius="6"
-            marginTop="40"
+            marginTop="28"
             marginRight="40"
             marginLeft="20">
         <brls:Image
@@ -22,10 +20,9 @@
                 margin="10"
                 image="@res/pictures/default_avatar.png"/>
         <brls:Box
-                marginLeft="40"
-                wireframe="false"
+                marginLeft="10"
                 axis="column"
-                width="25%">
+                width="35%">
             <brls:Label
                     marginTop="20"
                     id="mine/label/username"
@@ -35,14 +32,13 @@
                     id="mine/label/sign"
                     marginBottom="10"
                     grow="1"
+                    singleLine="true"
                     fontSize="16"
                     textColor="@theme/font/grey"
                     text=""/>
         </brls:Box>
         <brls:Box
-                wireframe="false"
-                marginLeft="100"
-                marginRight="100"
+                marginRight="10"
                 alignItems="center"
                 grow="1">
             <brls:Box
@@ -53,12 +49,13 @@
                     axis="column">
                 <brls:Label
                         id="mine/label/dynamic"
-                        fontSize="24"
+                        fontSize="@style/wiliwili/mine/num"
                         marginTop="20"
                         text="0"/>
                 <brls:Label
+                        singleLine="true"
                         marginTop="4"
-                        fontSize="16"
+                        fontSize="@style/wiliwili/mine/type"
                         textColor="@theme/font/grey"
                         text="@i18n/wiliwili/mine/activity"/>
             </brls:Box>
@@ -77,12 +74,13 @@
                     axis="column">
                 <brls:Label
                         id="mine/label/following"
-                        fontSize="24"
+                        fontSize="@style/wiliwili/mine/num"
                         marginTop="20"
                         text="0"/>
                 <brls:Label
+                        singleLine="true"
                         marginTop="4"
-                        fontSize="16"
+                        fontSize="@style/wiliwili/mine/type"
                         textColor="@theme/font/grey"
                         text="@i18n/wiliwili/mine/following"/>
             </brls:Box>
@@ -101,12 +99,13 @@
                     axis="column">
                 <brls:Label
                         id="mine/label/follower"
-                        fontSize="24"
+                        fontSize="@style/wiliwili/mine/num"
                         marginTop="20"
                         text="0"/>
                 <brls:Label
+                        singleLine="true"
                         marginTop="4"
-                        fontSize="16"
+                        fontSize="@style/wiliwili/mine/type"
                         textColor="@theme/font/grey"
                         text="@i18n/wiliwili/mine/follower"/>
             </brls:Box>
@@ -125,12 +124,13 @@
                     axis="column">
                 <brls:Label
                         id="mine/label/coins"
-                        fontSize="24"
+                        fontSize="@style/wiliwili/mine/num"
                         marginTop="20"
                         text="0"/>
                 <brls:Label
+                        singleLine="true"
                         marginTop="4"
-                        fontSize="16"
+                        fontSize="@style/wiliwili/mine/type"
                         textColor="@theme/font/grey"
                         text="@i18n/wiliwili/mine/coin"/>
             </brls:Box>
@@ -140,6 +140,7 @@
     <AutoTabFrame
             id="mine/tab/frame"
             grow="1"
+            marginBottom="8"
             defaultTab="0"
             tabHeight="65"
             tabFontSize="16"
@@ -153,7 +154,35 @@
 
         <Tab label="@i18n/wiliwili/mine/collection"
              fontSize="18">
-            <MineCollection id="mine/collection"/>
+            <MineCollection
+                    id="mine/collection"
+                    type="1"/>
+        </Tab>
+
+        <Tab label="@i18n/wiliwili/mine/subscription"
+             fontSize="18">
+            <MineCollection
+                    id="mine/subscription"
+                    type="2"/>
+        </Tab>
+
+        <Tab label="@i18n/wiliwili/mine/anime"
+             fontSize="18">
+            <MineBangumi
+                    id="mine/anime"
+                    type="1"/>
+        </Tab>
+
+        <Tab label="@i18n/wiliwili/mine/series"
+             fontSize="18">
+            <MineBangumi
+                    id="mine/series"
+                    type="2"/>
+        </Tab>
+
+        <Tab label="@i18n/wiliwili/mine/later"
+             fontSize="18">
+            <MineLater id="mine/later"/>
         </Tab>
 
     </AutoTabFrame>

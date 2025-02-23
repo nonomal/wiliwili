@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "nlohmann/json.hpp"
+#include "bilibili/util/json.hpp"
 #include "user_result.h"
 #include "home_result.h"
 
@@ -19,7 +19,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankPGCConfig, index_show);
 class HotsRankPGCVideoResult {
 public:
     int rank;
-    int season_id;
+    uint64_t season_id;
     std::string ss_horizontal_cover;  //横版封面
     std::string cover;                //竖版封面
     std::string title;
@@ -27,9 +27,7 @@ public:
     HotsRankPGCConfig new_ep;
     VideoSimpleStateResult stat;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankPGCVideoResult, title, rank,
-                                   season_id, ss_horizontal_cover, new_ep,
-                                   stat);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankPGCVideoResult, title, rank, season_id, ss_horizontal_cover, new_ep, stat);
 
 typedef std::vector<HotsRankPGCVideoResult> HotsRankPGCVideoListResult;
 
@@ -38,14 +36,13 @@ public:
     std::string note;
     HotsRankPGCVideoListResult list;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankPGCVideoListResultWrapper, note,
-                                   list);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankPGCVideoListResultWrapper, note, list);
 
 class HotsRankVideoResult {
 public:
-    int aid;
+    uint64_t aid;
     std::string bvid;
-    int cid;
+    uint64_t cid;
     std::string pic;
     std::string title;
     int duration;
@@ -53,8 +50,7 @@ public:
     UserSimpleResult owner;
     VideoSimpleStateResult stat;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankVideoResult, aid, bvid, cid, pic,
-                                   title, duration, pubdate, owner, stat);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsRankVideoResult, aid, bvid, cid, pic, title, duration, pubdate, owner, stat);
 
 typedef std::vector<HotsRankVideoResult> HotsRankVideoListResult;
 

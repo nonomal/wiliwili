@@ -2,62 +2,130 @@
 // Created by fang on 2022/8/18.
 //
 
-#include <borealis.hpp>
+#include <borealis/core/i18n.hpp>
+#include <borealis/core/thread.hpp>
 
 #include "bilibili.h"
+#include "bilibili/result/mine_result.h"
 #include "presenter/dynamic_video.hpp"
+#include "utils/config_helper.hpp"
 
-void DynamicVideoRequest::onDynamicVideoList(
-    const bilibili::DynamicVideoListResult &result, unsigned int index) {}
+using namespace brls::literals;
 
-void DynamicVideoRequest::onError(const std::string &error) {}
+void DynamicVideoRequest::onDynamicVideoList(const bilibili::DynamicVideoListResult &result, unsigned int index) {}
 
-void DynamicVideoRequest::setCurrentUser(unsigned int mid) {
-    this->currentUser = mid;
-}
+void DynamicVideoRequest::onDynamicArticleList(const bilibili::DynamicArticleListResult &result, unsigned int index) {}
 
-void DynamicVideoRequest::requestData(bool refresh) {
+void DynamicVideoRequest::onVideoError(const std::string &error) {}
+
+void DynamicVideoRequest::onArticleError(const std::string &error) {}
+
+void DynamicVideoRequest::setCurrentUser(int64_t mid) { this->currentUser = mid; }
+
+void DynamicVideoRequest::requestData(bool refresh, DynamicRequestMode mode) {
     if (refresh) {
-        currentPage   = 1;
-        currentOffset = "";
+        currentVideoPage     = 1;
+        currentVideoOffset   = "";
+        currentArticlePage   = 1;
+        currentArticleOffset = "";
     }
-    if (this->currentUser == 0) {
-        this->requestDynamicVideoList(currentPage, currentOffset);
+    if (mode == DynamicRequestMode::Article) {
+        // 图文
+        this->requestDynamicArticleList(currentArticlePage, currentArticleOffset);
     } else {
-        this->requestUserDynamicVideoList(currentUser, currentPage);
+        // 视频
+        this->requestVideoData(currentVideoPage, currentVideoOffset, currentUser);
     }
 }
 
-void DynamicVideoRequest::requestDynamicVideoList(unsigned int page,
-                                                  const std::string &offset) {
-    bilibili::BilibiliClient::dynamic_video(
+void DynamicVideoRequest::requestVideoData(unsigned int page, const std::string &offset, uint64_t mid) {
+    if (mid == 0) {
+        this->requestDynamicVideoList(page, offset);
+    } else {
+        this->requestUserDynamicVideoList(mid, page);
+    }
+}
+
+void DynamicVideoRequest::requestDynamicVideoList(unsigned int page, const std::string &offset) {
+    auto mid = ProgramConfig::instance().getUserID();
+    if (mid.empty() || mid == "0") {
+        this->onVideoError("wiliwili/home/common/no_login"_i18n);
+        return;
+    }
+    brls::Logger::debug("request dynamic video list: user: {}; page: {}; offset: {}", currentUser, page, offset);
+    BILI::dynamic_video(
         page, offset,
         [this](const bilibili::DynamicVideoListResultWrapper &result) {
-            if (currentPage != result.page) {
-                brls::Logger::error(
-                    "request dynamic video error: current page: {}, got: {}",
-                    currentPage, result.page);
+            if (currentVideoPage != result.page) {
+                brls::Logger::error("request dynamic video error: current page: {}, got: {}", currentVideoPage,
+                                    result.page);
                 return;
             }
-            currentOffset = result.offset;
-            currentPage   = result.page + 1;
+            currentVideoOffset = result.offset;
+            currentVideoPage   = result.page + 1;
             this->onDynamicVideoList(result.items, result.page);
         },
-        [this](const std::string &error) { this->onError(error); });
+        [this](BILI_ERR) { this->onVideoError(error); });
 }
 
-void DynamicVideoRequest::requestUserDynamicVideoList(int mid, int pn, int ps) {
-    bilibili::BilibiliClient::get_user_videos2(
-        mid, pn, ps,
-        [this](const bilibili::UserDynamicVideoResultWrapper &result) {
-            if (currentPage != result.page.pn) {
-                brls::Logger::error(
-                    "request dynamic video error: current page: {}, got: {}",
-                    currentPage, result.page.pn);
+void DynamicVideoRequest::requestDynamicArticleList(unsigned int page, const std::string &offset) {
+    auto mid = ProgramConfig::instance().getUserID();
+    if (mid.empty() || mid == "0") {
+        this->onArticleError("wiliwili/home/common/no_login"_i18n);
+        return;
+    }
+    brls::Logger::debug("request dynamic article list: user: {}; page: {}; offset: {}", currentUser, page, offset);
+    BILI::dynamic_article(
+        page, offset, currentUser,
+        [this](const bilibili::DynamicArticleListResultWrapper &result) {
+            if (currentArticlePage != result.page) {
+                brls::Logger::error("request dynamic video error: current page: {}, got: {}", currentArticlePage,
+                                    result.page);
                 return;
             }
-            currentPage = result.page.pn + 1;
+            currentArticleOffset = result.offset;
+            currentArticlePage   = result.page + 1;
+            this->onDynamicArticleList(result.items, result.page);
+        },
+        [this](BILI_ERR) { this->onArticleError(error); });
+}
+
+void DynamicVideoRequest::requestUserDynamicVideoList(int64_t mid, int pn, int ps) {
+    brls::Logger::debug("request dynamic video list: user: {}; page: {}", currentUser, pn);
+    BILI::get_user_videos2(
+        mid, pn, ps,
+        [this](const bilibili::UserDynamicVideoResultWrapper &result) {
+            if (currentVideoPage != result.page.pn) {
+                brls::Logger::error("request dynamic video error: current page: {}, got: {}", currentVideoPage,
+                                    result.page.pn);
+                return;
+            }
+            currentVideoPage = result.page.pn + 1;
             this->onDynamicVideoList(result.archives, result.page.pn);
         },
-        [this](const std::string &error) { this->onError(error); });
+        [this](BILI_ERR) {
+            this->onVideoError(error);
+        });
+}
+
+void DynamicArticleRequest::onDynamicArticle(const bilibili::DynamicArticleResult& result) {}
+
+void DynamicArticleRequest::onError(const std::string& error) {}
+
+void DynamicArticleRequest::requestDynamicArticle(const std::string& id) {
+    ASYNC_RETAIN
+    BILI::get_dynamic_detail(
+        id,
+        [ASYNC_TOKEN](const bilibili::DynamicArticleResultWrapper& result) {
+            brls::sync([ASYNC_TOKEN, result]() {
+                ASYNC_RELEASE
+                this->onDynamicArticle(result.item);
+            });
+        },
+        [ASYNC_TOKEN](BILI_ERR) {
+            brls::sync([ASYNC_TOKEN, error]() {
+                ASYNC_RELEASE
+                this->onError(error);
+            });
+        });
 }

@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include <borealis.hpp>
 #include "view/auto_tab_frame.hpp"
 #include "presenter/mine_collection.hpp"
 #include "view/recycling_grid.hpp"
@@ -18,14 +17,13 @@ class MineCollection : public AttachedView, public MineCollectionRequest {
 public:
     MineCollection();
 
-    ~MineCollection();
+    ~MineCollection() override;
 
     static View *create();
 
     void onCreate() override;
 
-    void onCollectionList(
-        const bilibili::CollectionListResultWrapper &result) override;
+    void onCollectionList(const bilibili::CollectionListResultWrapper &result) override;
 
     void onError(const std::string &error) override;
 

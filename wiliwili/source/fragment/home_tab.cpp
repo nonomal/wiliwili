@@ -2,10 +2,12 @@
 // Created by fang on 2022/6/9.
 //
 
-#include <borealis.hpp>
-#include <borealis/platforms/switch/swkbd.hpp>
+#include <borealis/core/touch/tap_gesture.hpp>
+
+#include "activity/search_activity_tv.hpp"
 #include "fragment/home_tab.hpp"
-#include "activity/search_activity.hpp"
+#include "view/custom_button.hpp"
+#include "utils/activity_helper.hpp"
 
 using namespace brls::literals;
 
@@ -15,17 +17,15 @@ HomeTab::HomeTab() {
 }
 
 void HomeTab::onCreate() {
-    this->registerTabAction(
-        "wiliwili/search/tab"_i18n, brls::ControllerButton::BUTTON_Y,
-        [](brls::View* view) -> bool {
-            brls::Swkbd::openForText(
-                [](std::string text) {
-                    brls::Application::pushActivity(new SearchActivity(text));
-                },
-                "wiliwili/home/common/search"_i18n, "", 32, "", 0);
-
-            return true;
-        });
+    this->registerTabAction("wiliwili/search/tab"_i18n, brls::ControllerButton::BUTTON_Y, [](brls::View* view) -> bool {
+        if (TVSearchActivity::TV_MODE) {
+            Intent::openTVSearch();
+        } else {
+            brls::Application::getImeManager()->openForText([](const std::string& text) { Intent::openSearch(text); },
+                                                            "wiliwili/home/common/search"_i18n, "", 32, "", 0);
+        }
+        return true;
+    });
 
     this->registerTabAction(
         "上一项", brls::ControllerButton::BUTTON_LB,
@@ -43,14 +43,29 @@ void HomeTab::onCreate() {
         },
         true);
 
-    this->search->addGestureRecognizer(
-        new brls::TapGestureRecognizer(this->search, []() {
-            brls::Swkbd::openForText(
-                [](std::string text) {
-                    brls::Application::pushActivity(new SearchActivity(text));
-                },
-                "wiliwili/home/common/search"_i18n, "", 32, "", 0);
-        }));
+    this->search->registerClickAction([](brls::View* view) -> bool {
+        HomeTab::openSearch();
+        return true;
+    });
+    this->search->addGestureRecognizer(new brls::TapGestureRecognizer(this->search));
+
+    this->search->setCustomNavigation([this](brls::FocusDirection direction) {
+        if (direction == brls::FocusDirection::DOWN) {
+            return (brls::View*)this->tabFrame->getActiveTab();
+        } else if (direction == brls::FocusDirection::LEFT) {
+            return (brls::View*)this->tabFrame->getSidebar();
+        }
+        return (brls::View*)nullptr;
+    });
+}
+
+void HomeTab::openSearch() {
+    if (TVSearchActivity::TV_MODE) {
+        Intent::openTVSearch();
+    } else {
+        brls::Application::getImeManager()->openForText([](const std::string& text) { Intent::openSearch(text); },
+                                                        "wiliwili/home/common/search"_i18n, "", 32, "", 0);
+    }
 }
 
 brls::View* HomeTab::create() { return new HomeTab(); }

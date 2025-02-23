@@ -27,6 +27,7 @@
                 text="每周五晚18:00更新"/>
 
         <brls:Box
+                id="home/hots/weekly/box"
                 width="160"
                 height="35"
                 backgroundColor="@theme/color/grey_2"
@@ -40,13 +41,13 @@
                     fontSize="13"
                     singleLine="true"
                     text="第 N 期(00/00更新)"/>
-            <brls:Label
+            <HintLabel
                     culled="false"
                     height="35"
                     positionType="absolute"
                     positionRight="4"
                     fontSize="14"
-                    text=""/>
+                    text="x"/>
         </brls:Box>
     </brls:Box>
 
@@ -54,7 +55,7 @@
             paddingLeft="20"
             paddingRight="20"
             grow="1"
-            spanCount="4"
+            spanCount="@style/wiliwili/grid/span/4"
             itemHeight="260.5"
             wireframe="false"
             id="home/hots/weekly/recyclingGrid"/>

@@ -7,10 +7,10 @@
 #include "bilibili/result/home_pgc_result.h"
 #include "view/recycling_grid.hpp"
 #include "view/video_card.hpp"
-#include "activity/player_activity.hpp"
 #include "activity/pgc_index_activity.hpp"
+#include "presenter.h"
 
-class HomeBangumiRequest {
+class HomeBangumiRequest : public Presenter {
 public:
     virtual void onBangumiList(const bilibili::PGCResultWrapper& result);
 
@@ -18,14 +18,14 @@ public:
 
     void requestData(bool refresh = true);
 
-    void requestBangumiList(int is_refresh = 0, std::string cursor = "0");
+    void requestBangumiList(int is_refresh = 0, const std::string& cursor = "0");
 
 protected:
-    std::string next_cursor = "";
-    int refresh_flag        = 0;
+    std::string next_cursor;
+    int refresh_flag = 0;
 };
 
-class HomeCinemaRequest {
+class HomeCinemaRequest : public Presenter {
 public:
     virtual void onCinemaList(const bilibili::PGCResultWrapper& result);
 
@@ -33,19 +33,18 @@ public:
 
     void requestData(bool refresh = true);
 
-    void requestCinemaList(int is_refresh = 0, std::string cursor = "0");
+    void requestCinemaList(int is_refresh = 0, const std::string& cursor = "0");
 
 protected:
-    std::string next_cursor = "";
-    int refresh_flag        = 0;
+    std::string next_cursor;
+    int refresh_flag = 0;
 };
 
 class DataSourcePGCVideoList : public RecyclingGridDataSource {
 public:
-    DataSourcePGCVideoList(bilibili::PGCModuleResult result);
+    explicit DataSourcePGCVideoList(const bilibili::PGCModuleResult& result);
 
-    RecyclingGridItem* cellForRow(RecyclingGrid* recycler,
-                                  size_t index) override;
+    RecyclingGridItem* cellForRow(RecyclingGrid* recycler, size_t index) override;
 
     size_t getItemCount() override;
 

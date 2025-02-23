@@ -11,9 +11,9 @@
         <brls:Image
                 id="video/card/picture"
                 scalingType="fill"
-                backgroundColor="@theme/color/grey_1"
                 height="100%"
                 width="100%"
+                image="@res/pictures/video-card-bg.png"
                 cornerRadius="4"/>
 
         <brls:Box
@@ -87,6 +87,7 @@
                 id="video/card/label/title"
                 fontSize="20"
                 lineHeight="1.5"
+                maxRows="2"
                 width="100%"
                 height="60"/>
         <brls:Box

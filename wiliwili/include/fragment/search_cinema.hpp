@@ -11,18 +11,20 @@
 
 #include <atomic>
 #include <memory>
-#include <borealis.hpp>
-#include "view/recycling_grid.hpp"
 
-class SearchCinema : public brls::Box {
+#include "fragment/search_interface.hpp"
+
+class RecyclingGrid;
+
+class SearchCinema : public SearchAttachedView {
 public:
     SearchCinema();
 
-    ~SearchCinema();
+    ~SearchCinema() override;
 
-    static View* create();
+    static brls::View* create();
 
-    void requestSearch(const std::string& key);
+    void requestSearch(const std::string& key) override;
 
     void _requestSearch(const std::string& key);
 

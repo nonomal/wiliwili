@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "nlohmann/json.hpp"
+#include "bilibili/util/json.hpp"
 #include "user_result.h"
 #include "home_result.h"
 
@@ -12,9 +12,9 @@ namespace bilibili {
 
 class HotsHistoryVideoResult {
 public:
-    int aid;
+    uint64_t aid;
     std::string bvid;
-    int cid;
+    uint64_t cid;
     std::string pic;
     std::string title;
     int duration;
@@ -23,8 +23,7 @@ public:
     VideoSimpleStateResult stat;
     std::string achievement;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsHistoryVideoResult, aid, bvid, cid, pic,
-                                   title, duration, pubdate, owner, stat,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsHistoryVideoResult, aid, bvid, cid, pic, title, duration, pubdate, owner, stat,
                                    achievement);
 
 typedef std::vector<HotsHistoryVideoResult> HotsHistoryVideoListResult;
@@ -34,7 +33,6 @@ public:
     std::string explain;
     HotsHistoryVideoListResult list;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsHistoryVideoListResultWrapper, explain,
-                                   list);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(HotsHistoryVideoListResultWrapper, explain, list);
 
 };  // namespace bilibili

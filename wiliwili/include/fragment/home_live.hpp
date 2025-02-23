@@ -21,18 +21,20 @@ class HomeLive : public AttachedView, public HomeLiveRequest {
 public:
     HomeLive();
 
-    void onLiveList(const bilibili::LiveVideoListResult &result, int index,
-                    bool no_more) override;
+    void onLiveList(const bilibili::LiveVideoListResult &result, int index) override;
 
-    ~HomeLive();
+    void switchChannel();
+
+    ~HomeLive() override;
 
     void onCreate() override;
+
+    void onError(const std::string &error) override;
 
     static View *create();
 
 private:
-    BRLS_BIND(brls::Label, live_note, "home/live/note");
     BRLS_BIND(brls::Label, live_label, "home/live/label");
     BRLS_BIND(RecyclingGrid, recyclingGrid, "home/live/recyclingGrid");
-    ;
+    BRLS_BIND(brls::Box, live_box, "home/live/box");
 };

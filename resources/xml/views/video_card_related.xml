@@ -11,9 +11,9 @@
         <brls:Image
                 id="video/card/picture"
                 scalingType="fill"
-                backgroundColor="@theme/color/grey_1"
                 height="100%"
                 width="40%"
+                image="@res/pictures/video-card-bg.png"
                 cornerRadius="4"/>
 
         <brls:Box
@@ -28,10 +28,38 @@
             <brls:Label
                     id="video/card/label/duration"
                     positionType="absolute"
-                    positionRight="0"
+                    positionRight="2"
                     textColor="#FFFFFF"
-                    fontSize="16"
-                    text="时长：13:14"/>
+                    fontSize="16"/>
+        </brls:Box>
+
+        <brls:Box
+                id="video/card/box/charging"
+                positionTop="4"
+                positionRight="4"
+                positionType="absolute"
+                paddingLeft="10"
+                paddingRight="10"
+                width="84"
+                height="20"
+                cornerRadius="4"
+                visibility="gone"
+                backgroundColor="@theme/color/bilibili">
+            <SVGImage
+                    marginTop="2"
+                    height="17"
+                    width="16"
+                    positionType="absolute"
+                    positionLeft="4"
+                    SVG="@res/svg/charging-icon.svg"/>
+            <brls:Label
+                    id="video/card/label/duration"
+                    positionType="absolute"
+                    positionLeft="20"
+                    positionTop="2"
+                    textColor="#FFFFFF"
+                    fontSize="14"
+                    text="充电专属"/>
         </brls:Box>
 
     </brls:Box>
@@ -47,6 +75,7 @@
                 id="video/card/label/title"
                 fontSize="18"
                 lineHeight="1.5"
+                maxRows="2"
                 wireframe="false"
                 width="100%"
                 height="53"/>

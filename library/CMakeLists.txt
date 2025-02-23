@@ -1,123 +1,111 @@
 cmake_minimum_required(VERSION 3.15)
 
-# import cpr
-set(CPR_FORCE_USE_SYSTEM_CURL ON)
-if (PLATFORM_DESKTOP)
-    if (APPLE)
-        set(CPR_FORCE_DARWINSSL_BACKEND ON)
-    endif ()
-    if (WIN32)
-        set(CPR_FORCE_USE_SYSTEM_CURL OFF)
-        set(CPR_FORCE_WINSSL_BACKEND ON)
+# add cpr
+if (USE_SYSTEM_CPR)
+    find_package(cpr CONFIG REQUIRED)
+    if (cpr_FOUND)
+        message(STATUS "Found cpr: ${cpr_CONFIG} (found version ${cpr_VERSION})")
     endif ()
 else ()
-    set(CPR_FORCE_MBEDTLS_BACKEND ON)
+    if (USE_SYSTEM_CURL)
+        set(CPR_USE_SYSTEM_CURL ON)
+    else ()
+        set(CPR_USE_SYSTEM_CURL OFF)
+    endif ()
+
+    set(BUILD_SHARED_LIBS OFF)
+    set(CPR_ENABLE_SSL ON)
+    if (PLATFORM_DESKTOP)
+        if (WIN32)
+            set(CPR_FORCE_WINSSL_BACKEND ON)
+        endif ()
+    elseif (PLATFORM_IOS)
+        set(CPR_USE_SYSTEM_CURL OFF)
+        set(CPR_SKIP_CA_BUNDLE_SEARCH ON)
+    elseif (PLATFORM_SWITCH OR PLATFORM_PS4 OR PLATFORM_PSV)
+        set(CPR_USE_SYSTEM_CURL ON)
+        set(CPR_FORCE_MBEDTLS_BACKEND ON)
+    endif ()
+    add_subdirectory(cpr EXCLUDE_FROM_ALL)
+endif ()
+if (PLATFORM_PS4)
+    list(APPEND APP_PLATFORM_LIB SceNet mbedcrypto mbedtls mbedx509)
+    set(APP_PLATFORM_LIB ${APP_PLATFORM_LIB} PARENT_SCOPE)
 endif ()
 
-set(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(cpr
-        GIT_REPOSITORY https://github.com/libcpr/cpr.git
-        GIT_TAG f88fd7737de3e640c61703eb57a0fa0ce00c60cd) # cpr 1.9.2
-#7a02d679308a19220e3b75616c18ff9e8deb5f9a # cpr 1.9.1
-FetchContent_MakeAvailable(cpr)
-
-#import lunasvg
-set(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(lunasvg
-        GIT_REPOSITORY https://github.com/sammycage/lunasvg.git
-        GIT_TAG 7417baa0aff477f361e44e2aa793fdb0c7aae352) # 2.3.2
-FetchContent_MakeAvailable(lunasvg)
-
-##import libopencc
-add_subdirectory(OpenCC)
+# add libopencc
+if (NOT USE_LIBROMFS AND NOT DISABLE_OPENCC AND NOT PLATFORM_IOS)
+    set(BRLS_USE_OPENCC ON)
+    if (USE_SYSTEM_OPENCC)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(opencc REQUIRED IMPORTED_TARGET opencc)
+        add_library(libopencc ALIAS PkgConfig::opencc)
+        set(BRLS_OPENCC_INCLUDE ${opencc_INCLUDE_DIRS})
+    else ()
+        set(BUILD_SHARED_LIBS OFF)
+        set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+        add_subdirectory(OpenCC EXCLUDE_FROM_ALL)
+        target_compile_options(libopencc PRIVATE -w)
+        set(BRLS_OPENCC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/OpenCC/src)
+    endif ()
+else ()
+    set(BRLS_USE_OPENCC OFF)
+endif ()
 
 # add QR-Code-generator
-add_library(qrcode STATIC ${CMAKE_CURRENT_SOURCE_DIR}/QR-Code-generator/cpp/QrCode.cpp)
-target_include_directories(qrcode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/QR-Code-generator/cpp)
-set_property(TARGET qrcode PROPERTY CXX_STANDARD 17)
+if (USE_SYSTEM_QRCODEGEN)
+    find_package(qrcodegencpp REQUIRED GLOBAL)
+    add_library(qrcode ALIAS qrcodegencpp::qrcodegencpp)
+else ()
+    add_library(qrcode STATIC ${CMAKE_CURRENT_SOURCE_DIR}/QR-Code-generator/cpp/qrcodegen.cpp)
+    target_include_directories(qrcode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/QR-Code-generator/cpp)
+    set_property(TARGET qrcode PROPERTY CXX_STANDARD 17)
+endif ()
 
 # add pystring
-add_library(pystring STATIC ${CMAKE_CURRENT_SOURCE_DIR}/pystring/pystring.cpp)
-target_include_directories(pystring PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/pystring)
-set_property(TARGET pystring PROPERTY CXX_STANDARD 17)
+if (USE_SYSTEM_PYSTRING)
+    find_path(PYSTRING_INCLUDE_DIR pystring.h PATH_SUFFIXES pystring REQUIRED)
+    find_library(PYSTRING_LIBRARY NAMES pystring REQUIRED)
+    list(APPEND APP_PLATFORM_INCLUDE ${PYSTRING_INCLUDE_DIR})
+    list(APPEND APP_PLATFORM_LIB ${PYSTRING_LIBRARY})
+    set(APP_PLATFORM_LIB ${APP_PLATFORM_LIB} PARENT_SCOPE)
+    set(APP_PLATFORM_INCLUDE ${APP_PLATFORM_INCLUDE} PARENT_SCOPE)
+else ()
+    add_library(pystring STATIC ${CMAKE_CURRENT_SOURCE_DIR}/pystring/pystring.cpp)
+    target_include_directories(pystring PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/pystring)
+    set_property(TARGET pystring PROPERTY CXX_STANDARD 17)
+endif ()
+
+# add lunasvg
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+add_subdirectory(lunasvg EXCLUDE_FROM_ALL)
+
+# add mongoose
+if (USE_SYSTEM_MONGOOSE)
+    find_library(MONGOOSE_LIBRARY NAMES mongoose REQUIRED)
+    add_library(mongoose UNKNOWN IMPORTED)
+    set_property(TARGET mongoose PROPERTY IMPORTED_LOCATION ${MONGOOSE_LIBRARY})
+else ()
+    set(MG_ENABLE_IPV6 ON)
+    add_subdirectory(mongoose EXCLUDE_FROM_ALL)
+endif ()
+
+# add MemoryModule
+if (MPV_BUNDLE_DLL)
+    add_library (MemoryModule STATIC ${CMAKE_CURRENT_SOURCE_DIR}/MemoryModule/MemoryModule.c)
+    target_include_directories(MemoryModule PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/MemoryModule)
+endif ()
 
 # add borealis
-set(BOREALIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/borealis/library)
-set(NANOVG_PATH ${CMAKE_CURRENT_SOURCE_DIR}/nanovg/src)
+add_subdirectory(borealis/library)
 
-set(BOREALIS_INCLUDE
-        ${BOREALIS_PATH}/include
-        ${BOREALIS_PATH}/lib/extern/fmt/include
-        ${BOREALIS_PATH}/include/borealis/extern
-        ${BOREALIS_PATH}/include/borealis/extern/tinyxml2
-        ${BOREALIS_PATH}/lib/extern/yoga/src
-        ${BOREALIS_PATH}/lib/extern/tweeny/include
-        ${BOREALIS_PATH}/include/borealis/extern/nanovg-gl
-        )
-set(BOREALIS_SOURCE
-        ${BOREALIS_PATH}/lib/core
-        ${BOREALIS_PATH}/lib/core/touch
-        ${BOREALIS_PATH}/lib/views
-        ${BOREALIS_PATH}/lib/views/cells
-        ${BOREALIS_PATH}/lib/views/widgets
-        ${BOREALIS_PATH}/lib/extern/glad
-        ${BOREALIS_PATH}/lib/extern/tinyxml2
-        ${BOREALIS_PATH}/lib/extern/libretro-common/compat
-        ${BOREALIS_PATH}/lib/extern/libretro-common/encodings
-        ${BOREALIS_PATH}/lib/extern/libretro-common/features
-        ${BOREALIS_PATH}/lib/extern/yoga/src/yoga
-        ${BOREALIS_PATH}/lib/extern/yoga/src/yoga/event
-        ${BOREALIS_PATH}/lib/extern/nanovg-gl
-        )
+# add libpdr (不使用 pdr 项目内的 cmake 配置，因为其内的 mongoose 不支持 psv/switch)
+file(GLOB_RECURSE PDR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/libpdr/src/*.cpp)
+add_library(pdr ${PDR_SRC})
+set_property(TARGET pdr PROPERTY CXX_STANDARD 17)
+target_include_directories(pdr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libpdr/include)
+target_link_libraries(pdr mongoose tinyxml2)
 
-set(BOREALIS_SRC)
-if (PLATFORM_DESKTOP)
-    find_package(glfw3 REQUIRED)
-    list(APPEND BOREALIS_SOURCE
-            ${BOREALIS_PATH}/lib/platforms/glfw
-            ${BOREALIS_PATH}/lib/extern/fmt/src/
-            )
-    list(APPEND BOREALIS_SRC
-            ${BOREALIS_PATH}/lib/platforms/switch/swkbd.cpp
-            )
-    set(BRLS_PLATFORM_RESOURCES_PATH "\"./resources/\"")
-    set(BRLS_PLATFORM_LIBS glfw)
-    set(BRLS_PLATFORM_OPTION -DNO_TOUCH_SCROLLING=true -D__GLFW__)
-else ()
-    list(APPEND BOREALIS_SOURCE
-            ${BOREALIS_PATH}/lib/platforms/switch
-            ${BOREALIS_PATH}/lib/extern/nxfmtwrapper
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/archive
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/bfgrp
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/bfsar
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/bfwar
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/bfwav
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/bfwsd
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/src/player
-            )
-    list(APPEND BOREALIS_INCLUDE
-            ${BOREALIS_PATH}/lib/extern/switch-libpulsar/include
-            )
-    list(APPEND BOREALIS_SRC ${BOREALIS_PATH}/lib/platforms/glfw/glfw_video.cpp)
-    set(BRLS_PLATFORM_RESOURCES_PATH "\"romfs:/\"")
-    set(BRLS_PLATFORM_LIBS glfw3 EGL glapi drm_nouveau nx m)
-    set(BRLS_PLATFORM_OPTION $<$<COMPILE_LANGUAGE:CXX>:-Wno-volatile> -D__SWITCH__)
-endif ()
-foreach (lib ${BOREALIS_SOURCE})
-    aux_source_directory(${lib} TEMP_SRC)
-    list(APPEND BOREALIS_SRC ${TEMP_SRC})
-endforeach (lib)
-
-
-add_library(borealis STATIC ${BOREALIS_SRC})
-set_property(TARGET borealis PROPERTY CXX_STANDARD 17)
-target_include_directories(borealis PUBLIC ${BOREALIS_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/OpenCC/src)
-target_link_libraries(borealis ${BRLS_PLATFORM_LIBS} libopencc)
-target_compile_options(borealis PUBLIC
-        -DBRLS_RESOURCES=${BRLS_PLATFORM_RESOURCES_PATH}
-        -DOPENCC
-        -DYG_ENABLE_EVENTS
-        -ffunction-sections
-        -fdata-sections
-        ${BRLS_PLATFORM_OPTION}
-        )
+add_library(wiliwiliLibExtra INTERFACE)
+target_link_libraries(wiliwiliLibExtra INTERFACE cpr::cpr qrcode)

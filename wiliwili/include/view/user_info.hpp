@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include <borealis.hpp>
-#include "view/svg_image.hpp"
-#include "utils/image_helper.hpp"
+#include <borealis/core/box.hpp>
+#include <borealis/core/bind.hpp>
 
 enum class InfoHintType {
     UP_FOLLOWING,          // 已关注
@@ -18,93 +17,32 @@ enum class InfoHintType {
     NONE                   // 看自己的视频不显示
 };
 
+namespace brls {
+class Image;
+class Label;
+class Box;
+};  // namespace brls
+class SVGImage;
+
 class UserInfoView : public brls::Box {
 public:
-    UserInfoView() { this->inflateFromXMLRes("xml/views/user_info.xml"); }
+    UserInfoView();
 
-    ~UserInfoView() {
-        //        ImageHelper::clear(this->avatarView);
-    }
+    ~UserInfoView() override;
 
-    void setUserInfo(std::string avatar, std::string username,
-                     std::string misc) {
-        this->labelUsername->setText(username);
-        this->labeMisc->setText(misc);
+    void setUserInfo(const std::string& avatar, const std::string& username, const std::string& misc);
 
-        if (avatar.empty()) {
-            this->avatarView->getParent()->setVisibility(
-                brls::Visibility::GONE);
-        } else {
-            this->avatarView->getParent()->setVisibility(
-                brls::Visibility::VISIBLE);
-            ImageHelper::with(this)->load(avatar)->into(this->avatarView);
-        }
-    }
+    void setMainTextColor(NVGcolor color);
 
-    static brls::View* create() { return new UserInfoView(); }
+    static brls::View* create();
 
-    brls::Image* getAvatar() { return this->avatarView; }
+    brls::Image* getAvatar();
 
-    void setHintType(InfoHintType type) {
-        if (type == InfoHintType::NONE) {
-            this->boxHint->setVisibility(brls::Visibility::GONE);
-            return;
-        }
+    brls::Label* getLabelName();
 
-        this->boxHint->setVisibility(brls::Visibility::VISIBLE);
-        auto theme = brls::Application::getTheme();
+    brls::Label* getLabelMisc();
 
-        switch (type) {
-            case InfoHintType::UP_FOLLOWING:
-                this->boxHint->setBackgroundColor(
-                    theme.getColor("color/grey_1"));
-                this->svgHint->setImageFromSVGRes(
-                    "svg/bpx-svg-sprite-sort.svg");
-                this->labeHint->setText("已关注");
-                this->labeHint->setTextColor(theme.getColor("font/grey"));
-                break;
-            case InfoHintType::UP_NOT_FOLLOWED:
-                this->boxHint->setBackgroundColor(
-                    theme.getColor("color/bilibili"));
-                this->svgHint->setImageFromSVGRes("svg/bpx-svg-sprite-add.svg");
-                this->labeHint->setText("关注");
-                this->labeHint->setTextColor(theme.getColor("color/white"));
-                break;
-            case InfoHintType::BANGUMI_FOLLOWING:
-                this->boxHint->setBackgroundColor(
-                    theme.getColor("color/grey_1"));
-                this->svgHint->setImageFromSVGRes(
-                    "svg/bpx-svg-sprite-sort.svg");
-                this->labeHint->setText("已追番");
-                this->labeHint->setTextColor(theme.getColor("font/grey"));
-                break;
-            case InfoHintType::BANGUMI_NOT_FOLLOWED:
-                this->boxHint->setBackgroundColor(
-                    theme.getColor("color/bilibili"));
-                this->svgHint->setImageFromSVGRes("svg/bpx-svg-sprite-add.svg");
-                this->labeHint->setText("追番");
-                this->labeHint->setTextColor(theme.getColor("color/white"));
-                break;
-            case InfoHintType::CINEMA_FOLLOWING:
-                this->boxHint->setBackgroundColor(
-                    theme.getColor("color/grey_1"));
-                this->svgHint->setImageFromSVGRes(
-                    "svg/bpx-svg-sprite-sort.svg");
-                this->labeHint->setText("已追剧");
-                this->labeHint->setTextColor(theme.getColor("font/grey"));
-                break;
-            case InfoHintType::CINEMA_NOT_FOLLOWED:
-                this->boxHint->setBackgroundColor(
-                    theme.getColor("color/bilibili"));
-                this->svgHint->setImageFromSVGRes("svg/bpx-svg-sprite-add.svg");
-                this->labeHint->setText("追剧");
-                this->labeHint->setTextColor(theme.getColor("color/white"));
-                break;
-
-            default:
-                break;
-        }
-    }
+    void setHintType(InfoHintType type);
 
 private:
     BRLS_BIND(brls::Image, avatarView, "userinfo/avatar");

@@ -2,6 +2,10 @@
 // Created by fang on 2022/6/9.
 //
 
+#include <borealis/core/thread.hpp>
+#include <borealis/core/touch/tap_gesture.hpp>
+#include <borealis/views/dialog.hpp>
+
 #include "fragment/mine_tab.hpp"
 #include "fragment/mine_qr_login.hpp"
 #include "utils/image_helper.hpp"
@@ -10,7 +14,11 @@
 
 #include "fragment/mine_collection.hpp"
 #include "fragment/mine_history.hpp"
+#include "fragment/mine_bangumi.hpp"
 #include "fragment/dynamic_tab.hpp"
+#include "fragment/mine_later.hpp"
+
+#include "bilibili/result/mine_result.h"
 
 using namespace brls;
 using namespace brls::literals;
@@ -21,7 +29,7 @@ MineTab::MineTab() {
 
     this->loginCb.subscribe([this](bilibili::LoginInfo status) {
         if (status == bilibili::LoginInfo::SUCCESS) {
-            brls::Logger::debug("wiliwili/mine/login/success"_i18n);
+            brls::Logger::debug("{}", "wiliwili/mine/login/success"_i18n);
             this->requestData();
             try {
                 this->mineHistory->requestData(true);
@@ -32,14 +40,28 @@ MineTab::MineTab() {
             } catch (...) {
             }
             try {
+                this->mineSubscription->requestData(true);
+            } catch (...) {
+            }
+            try {
+                this->mineAnime->requestData(true);
+            } catch (...) {
+            }
+            try {
+                this->mineSeries->requestData(true);
+            } catch (...) {
+            }
+            try {
+                this->mineLater->requestData();
+            } catch (...) {
+            }
+            try {
                 //动态页刷新
                 auto mainTab = dynamic_cast<AutoTabFrame*>(this->getParent());
-                DynamicTab* tab =
-                    (DynamicTab*)mainTab->getTab(1)->getAttachedView();
+                auto* tab    = (DynamicTab*)mainTab->getTab(1)->getAttachedView();
                 if (!tab) {
                     brls::sync([mainTab]() {
-                        auto tab = dynamic_cast<DynamicTab*>(
-                            mainTab->getTab(1)->createAttachedView());
+                        auto tab = dynamic_cast<DynamicTab*>(mainTab->getTab(1)->createAttachedView());
                         tab->requestUpList();
                         tab->requestDynamicVideoList(1, "");
                     });
@@ -58,17 +80,18 @@ MineTab::MineTab() {
     // 在用户登录的情况获取到之前先清空点击事件
     boxGotoUserSpace->registerClickAction([](...) -> bool { return true; });
     this->requestData();
+
+    GA("user", {{"id", ProgramConfig::instance().getUserID()}})
+    GA("user", {{"user_id", ProgramConfig::instance().getUserID()}})
 }
 
 void MineTab::onCreate() {
-    this->registerTabAction("wiliwili/mine/login/refresh"_i18n,
-                            brls::ControllerButton::BUTTON_X,
+    this->registerTabAction("wiliwili/mine/login/refresh"_i18n, brls::ControllerButton::BUTTON_X,
                             [this](brls::View* view) -> bool {
                                 this->requestData();
                                 return true;
                             });
-    this->boxGotoUserSpace->addGestureRecognizer(
-        new TapGestureRecognizer(this->boxGotoUserSpace));
+    this->boxGotoUserSpace->addGestureRecognizer(new TapGestureRecognizer(this->boxGotoUserSpace));
 
     this->registerTabAction(
         "上一项", brls::ControllerButton::BUTTON_LB,
@@ -116,7 +139,7 @@ void MineTab::onUserInfo(const bilibili::UserResult& data) {
     boxGotoUserSpace->registerAction(
         "hints/ok"_i18n, BUTTON_A,
         [](View*) -> bool {
-            auto dialog = new Dialog("wiliwili/mine/login/logout"_i18n);
+            auto dialog = new brls::Dialog("wiliwili/mine/login/logout"_i18n);
             dialog->addButton("hints/back"_i18n, []() {});
             dialog->addButton("hints/ok"_i18n, []() {
                 ProgramConfig::instance().setCookie({});
@@ -132,8 +155,13 @@ void MineTab::onUserInfo(const bilibili::UserResult& data) {
     brls::sync([ASYNC_TOKEN, data]() {
         ASYNC_RELEASE
         labelUserName->setText(data.name);
-        ImageHelper::with(this)->load(data.face)->into(imageUserAvater);
-        labelSign->setText(data.sign);
+        ImageHelper::with(this->imageUserAvater)->load(data.face);
+        if (data.sign.empty()) {
+            labelSign->setText("这个人很神秘，什么都没有写");
+        } else {
+            labelSign->setText(data.sign);
+        }
+
         labelCoins->setText(fmt::format("{}", data.coins));
     });
 }
@@ -142,9 +170,7 @@ void MineTab::onUserDynamicStat(const bilibili::UserDynamicCount& result) {
     ASYNC_RETAIN
     brls::sync([ASYNC_TOKEN, result]() {
         ASYNC_RELEASE
-        std::string mid = ProgramConfig::instance().getUserID();
-        if (result.data.count(mid) != 0)
-            this->labelDynamic->setText(wiliwili::num2w(result.data.at(mid)));
+        this->labelDynamic->setText(wiliwili::num2w(result.dyn_num));
     });
 }
 

@@ -11,7 +11,8 @@
             height="50">
 
         <brls:Box
-                width="160"
+                id="home/live/box"
+                width="180"
                 height="35"
                 backgroundColor="@theme/color/grey_2"
                 marginRight="10"
@@ -23,15 +24,15 @@
                     culled="false"
                     fontSize="13"
                     singleLine="true"
-                    text="@i18n/wiliwili/home/live/default"/>
-            <brls:Label
+                    maxWidth="140"/>
+            <HintLabel
                     positionType="absolute"
                     positionRight="15"
                     culled="false"
                     height="35"
                     marginLeft="4"
                     fontSize="14"
-                    text=""/>
+                    text="x"/>
         </brls:Box>
 
     </brls:Box>
@@ -41,7 +42,7 @@
             paddingLeft="20"
             paddingRight="20"
             grow="1"
-            spanCount="4"
+            spanCount="@style/wiliwili/grid/span/4"
             itemHeight="200"
             wireframe="false"
             id="home/live/recyclingGrid"/>

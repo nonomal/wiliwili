@@ -1,5 +1,5 @@
 <brls:Box
-        width="1280"
+        width="@style/wiliwili/window/width"
         height="auto"
         axis="column">
 
@@ -14,12 +14,17 @@
             backgroundColor="@theme/brls/backdrop">
 
         <brls:Box
-                wireframe="true"
                 width="100%"
                 height="auto"
                 grow="1"
                 axis="column"
                 justifyContent="flexEnd">
+
+            <brls:Box
+                    id="grid_dropdown/cancel"
+                    width="100%"
+                    hideClickAnimation="true"
+                    grow="1"/>
 
             <brls:Box
                     id="grid_dropdown/content"
@@ -31,7 +36,6 @@
                 <brls:Box
                         wireframe="false"
                         id="grid_dropdown/header"
-                        width="100%"
                         height="@style/brls/dropdown/header_height"
                         axis="row"
                         paddingTop="@style/brls/applet_frame/header_padding_top_bottom"
@@ -49,7 +53,7 @@
                             width="auto"
                             height="auto"
                             marginTop="@style/brls/applet_frame/header_title_top_offset"
-                            fontSize="@style/brls/dropdown/header_title_font_size" />
+                            fontSize="@style/brls/dropdown/header_title_font_size"/>
 
                 </brls:Box>
 
@@ -68,11 +72,13 @@
                         paddingBottom="@style/brls/dropdown/listPadding"
                         paddingLeft="@style/brls/dropdown/listPaddingSides"/>
 
+                <ButtonClose
+                        positionType="absolute"
+                        positionTop="10"
+                        positionRight="10"/>
+
             </brls:Box>
 
-            <brls:BottomBar
-                    width="100%"
-                    backgroundColor="@theme/brls/background"/>
         </brls:Box>
 
     </brls:AppletFrame>

@@ -9,13 +9,19 @@
 
 #pragma once
 
-#include <borealis.hpp>
+#include <borealis/core/box.hpp>
+#include <borealis/core/bind.hpp>
+
+namespace brls {
+class Label;
+class Header;
+}  // namespace brls
 
 class SettingNetwork : public brls::Box {
 public:
     SettingNetwork();
 
-    ~SettingNetwork();
+    ~SettingNetwork() override;
 
     void networkTest();
 
@@ -30,4 +36,5 @@ private:
     BRLS_BIND(brls::Label, labelWIFI, "setting/net/wifi");
     BRLS_BIND(brls::Label, labelIP, "setting/net/ip");
     BRLS_BIND(brls::Label, labelDNS, "setting/net/dns");
+    BRLS_BIND(brls::Header, headerTest, "setting/net/test/header");
 };

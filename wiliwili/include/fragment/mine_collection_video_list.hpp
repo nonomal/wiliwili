@@ -9,30 +9,37 @@
 
 #pragma once
 
-#include <borealis.hpp>
+#include <borealis/core/box.hpp>
+#include <borealis/core/bind.hpp>
+
 #include "bilibili.h"
 #include "view/recycling_grid.hpp"
+#include "bilibili/result/mine_collection_result.h"
+
+class TextBox;
 
 class MineCollectionVideoList : public brls::Box {
 public:
-    MineCollectionVideoList(const bilibili::CollectionResult& data);
+    MineCollectionVideoList();
 
-    ~MineCollectionVideoList();
+    MineCollectionVideoList(const bilibili::CollectionResult& data, int type);
 
-    static View* create(const bilibili::CollectionResult& data);
+    ~MineCollectionVideoList() override;
+
+    static View* create();
 
     void requestCollectionList();
-
-    void onCollectionList(
-        const bilibili::CollectionVideoListResultWrapper& result);
 
 private:
     bilibili::CollectionResult collectionData;
 
-    BRLS_BIND(brls::Label, labelTitle, "collection/label/title");
+    BRLS_BIND(TextBox, labelTitle, "collection/label/title");
     BRLS_BIND(brls::Label, labelSubtitle, "collection/label/subtitle");
     BRLS_BIND(brls::Image, imageCover, "collection/cover");
     BRLS_BIND(RecyclingGrid, recyclingGrid, "collection/recyclingGrid");
+    BRLS_BIND(brls::AppletFrame, appletFrame, "collection/appletFrame");
 
     unsigned int requestIndex = 1;
+    int requestType           = 1;
+    bool hasMore              = true;
 };

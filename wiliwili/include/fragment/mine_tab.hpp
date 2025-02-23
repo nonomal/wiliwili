@@ -9,20 +9,25 @@
 
 #pragma once
 
-#include <borealis.hpp>
-#include "activity/player_activity.hpp"
 #include "presenter/user_home.hpp"
 #include "view/auto_tab_frame.hpp"
 
 typedef brls::Event<bilibili::LoginInfo> loginStatusEvent;
 class MineHistory;
 class MineCollection;
+class MineBangumi;
+class MineLater;
+
+namespace brls {
+class Label;
+class Image;
+}  // namespace brls
 
 class MineTab : public AttachedView, public UserHome {
 public:
     MineTab();
 
-    ~MineTab();
+    ~MineTab() override;
 
     void onCreate() override;
 
@@ -42,7 +47,11 @@ private:
     BRLS_BIND(brls::Image, imageUserAvater, "mine/image/avatar");
     BRLS_BIND(brls::Label, labelUserName, "mine/label/username");
     BRLS_BIND(MineHistory, mineHistory, "mine/history");
+    BRLS_BIND(MineLater, mineLater, "mine/Later");
     BRLS_BIND(MineCollection, mineCollection, "mine/collection");
+    BRLS_BIND(MineCollection, mineSubscription, "mine/subscription");
+    BRLS_BIND(MineBangumi, mineAnime, "mine/anime");
+    BRLS_BIND(MineBangumi, mineSeries, "mine/series");
     BRLS_BIND(brls::Label, labelSign, "mine/label/sign");
     BRLS_BIND(brls::Label, labelCoins, "mine/label/coins");
     BRLS_BIND(brls::Label, labelFollowing, "mine/label/following");

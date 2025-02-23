@@ -5,24 +5,21 @@
 #include "view/hots_card.hpp"
 #include "utils/image_helper.hpp"
 
-RecyclingGridItemHotsCard::RecyclingGridItemHotsCard() {
-    this->inflateFromXMLRes("xml/views/hots_card.xml");
+RecyclingGridItemHotsCard::RecyclingGridItemHotsCard() { this->inflateFromXMLRes("xml/views/hots_card.xml"); }
+
+RecyclingGridItemHotsCard::~RecyclingGridItemHotsCard() = default;
+
+void RecyclingGridItemHotsCard::setCard(const std::string& prefix, const std::string& name, const std::string& image) {
+    this->order->setText(prefix);
+    this->content->setText(name);
+    if (image.empty()) {
+        this->icon->setVisibility(brls::Visibility::GONE);
+    } else {
+        this->icon->setVisibility(brls::Visibility::VISIBLE);
+        ImageHelper::with(this->icon)->load(image);
+    }
 }
 
-RecyclingGridItemHotsCard::~RecyclingGridItemHotsCard() {}
+void RecyclingGridItemHotsCard::cacheForReuse() { ImageHelper::clear(this->icon); }
 
-void RecyclingGridItemHotsCard::setCard(int order, std::string showName,
-                                        std::string pic) {
-    this->order->setVisibility(brls::Visibility::VISIBLE);
-    this->order->setText(std::to_string(order));
-    this->content->setVisibility(brls::Visibility::VISIBLE);
-    this->content->setText(showName);
-    //    this->content->setHorizontalAlign(brls::HorizontalAlign::CENTER);
-    this->icon->setVisibility(brls::Visibility::VISIBLE);
-    if (pic.size()) ImageHelper::with(this)->load(pic)->into(this->icon);
-    //    this->icon->s
-}
-
-RecyclingGridItemHotsCard *RecyclingGridItemHotsCard::create() {
-    return new RecyclingGridItemHotsCard;
-}
+RecyclingGridItemHotsCard* RecyclingGridItemHotsCard::create() { return new RecyclingGridItemHotsCard(); }
